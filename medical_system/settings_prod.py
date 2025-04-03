@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pacientes',
+    'storages'
 ]
 
 # Middleware settings
@@ -79,8 +80,9 @@ DATABASES = {
 }
 
 # Si estamos en Cloud Run, usar socket para la base de datos
-if os.environ.get('K_SERVICE'):
-    DATABASES['default']['HOST'] = f"/cloudsql/{access_secret_version('db-instance')}"
+db_instance = access_secret_version("db-instance")
+if os.environ.get('K_SERVICE') and db_instance:
+    DATABASES['default']['HOST'] = f"/cloudsql/{db_instance}"
     DATABASES['default']['PORT'] = ''
 
 # Static files settings
@@ -99,8 +101,30 @@ STORAGES = {
 }
 
 # Media files settings
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+#MEDIA_URL = '/media/'
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+
+# Configuración de Google Cloud Storage
+GOOGLE_APPLICATION_CREDENTIALS = access_secret_version("gcs-credentials-json")
+
+if GOOGLE_APPLICATION_CREDENTIALS:
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
+
+# Nombre del bucket de Google Cloud Storage
+GS_BUCKET_NAME = "arquisoft-453601_imagenes"
+
+# Configuración de almacenamiento de archivos en GCS
+DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+GS_DEFAULT_ACL = None  # Evita que los archivos sean públicos por defecto
+
+MEDIA_URL = f"https://storage.googleapis.com/{GS_BUCKET_NAME}/"
+
+# Tipos de archivos permitidos
+ALLOWED_FILE_EXTENSIONS = ['.jpg', '.png', '.jpeg', '.pdf', '.txt', '.dcm']
+
+
 
 # Password validation settings
 AUTH_PASSWORD_VALIDATORS = [
