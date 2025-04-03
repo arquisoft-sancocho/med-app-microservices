@@ -10,5 +10,4 @@ class PacienteForm(forms.ModelForm):
             'edad': 'Edad',
             'direccion': 'Dirección',
             'telefono': 'Teléfono',
-            'tipo_sangre': 'Tipo-de-sangre',
         }
