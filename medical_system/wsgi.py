@@ -1,5 +1,5 @@
 """
-WSGI config for monitoring project.
+WSGI config for medical_system project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

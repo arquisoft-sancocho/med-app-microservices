@@ -8,8 +8,8 @@ INSTANCE_NAME="django-db-instance"
 
 # Realizar las migraciones
 echo "Ejecutando makemigrations..."
-DJANGO_SETTINGS_MODULE=monitoring.settings_prod python manage.py makemigrations
+DJANGO_SETTINGS_MODULE=medical_system.settings_prod python manage.py makemigrations
 
 echo "Ejecutando migrate..."
 # Ejecutar migraciones
-DJANGO_SETTINGS_MODULE=monitoring.settings_prod python manage.py migrate
+DJANGO_SETTINGS_MODULE=medical_system.settings_prod python manage.py migrate
