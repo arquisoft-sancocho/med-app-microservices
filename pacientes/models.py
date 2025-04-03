@@ -5,9 +5,8 @@ class Paciente(models.Model):
     edad = models.IntegerField()
     direccion = models.TextField()
     telefono = models.CharField(max_length=15)
+    tipo_sangre = models.CharField(max_length=3, blank=True, null=True)
     fecha_registro = models.DateField(auto_now_add=True)
-    tipo_sangre = models.CharField(max_length=3)
-    prueba = models.IntegerField()
     
 
     def __str__(self):
