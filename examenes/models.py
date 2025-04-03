@@ -10,7 +10,7 @@ class Examen(models.Model):
     TIPOS = [
         ('eeg', 'EEG'),
         ( 'rm', 'Resonancia magnética'),
-        ( 'mirna', 'MicroRNA')
+        ( 'mirna', 'MicroRNA'),
         ( 'sangre', 'Muestra de sangre'),
     ]
 
