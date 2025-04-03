@@ -6,6 +6,7 @@ class Paciente(models.Model):
     direccion = models.TextField()
     telefono = models.CharField(max_length=15)
     fecha_registro = models.DateField(auto_now_add=True)
+    tipo_sangre = models.CharField(max_length=3)
     
 
     def __str__(self):

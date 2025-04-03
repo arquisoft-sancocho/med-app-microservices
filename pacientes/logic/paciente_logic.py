@@ -17,9 +17,10 @@ def create_paciente(form):
 
 def get_paciente_by_id(paciente_id):
     """
-    Obtiene un paciente  paciente por su ID. Devuelve None si no existe.
+    Obtiene un paciente por su ID. Devuelve None si no existe.
     """
     try:
         return Paciente.objects.get(id=paciente_id)
     except Paciente.DoesNotExist:
         return None
+    

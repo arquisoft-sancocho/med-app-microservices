@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Detalles del Examen</h2>
+<p><strong>Tipo de examen:</strong> {{ examen.tipo_examen  }}</p>
+<p><strong>Paciente asociado:</strong> {{ examen.paciente.nombre }}</p>
+<p><strong>Fecha de realización:</strong> {{ examen.fecha_realizacion }}</p>
+<p><strong>Resultado:</strong> {{ examen.resultado }}</p>
+<a href="{% url 'examenList' %}">Volver a la lista</a>
+{% endblock %}
