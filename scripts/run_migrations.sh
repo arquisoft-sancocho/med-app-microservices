@@ -14,5 +14,4 @@ echo "Ejecutando migrate..."
 # Ejecutar migraciones
 DJANGO_SETTINGS_MODULE=medical_system.settings_prod python manage.py migrate
 
-echo "Mostrando primeros 10 pacientes:"
-echo "SELECT * FROM pacientes_paciente LIMIT 10;" | python manage.py dbshell
+
