@@ -15,7 +15,7 @@ def access_secret_version(secret_id, version_id="latest"):
         return None
 
 # Configuración para producción
-DEBUG = False
+DEBUG = True
 
 # Cargar SECRET_KEY desde Secret Manager
 SECRET_KEY = access_secret_version("django-secret-key") or SECRET_KEY
