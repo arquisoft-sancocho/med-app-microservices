@@ -10,7 +10,7 @@ class DiagnosticoForm(forms.ModelForm):
 
     class Meta:
         model = Diagnostico
-        fields = ['nombre', 'fecha_realizacion', 'paciente', 'resultados_obtenidos', 'tratamiento', 'info_extra']
+        fields = ['nombre', 'fecha_realizacion', 'paciente', 'resultados_obtenidos', 'info_extra']
         widgets = {
             'fecha_realizacion': forms.DateInput(attrs={'type': 'date'}),
         }
