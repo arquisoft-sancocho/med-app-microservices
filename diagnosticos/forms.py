@@ -2,12 +2,6 @@ from django import forms
 from .models import Diagnostico, Tratamiento
 
 class DiagnosticoForm(forms.ModelForm):
-    tratamiento_aplica = forms.BooleanField(
-        required=False,
-        label="¿Necesita tratamiento?",
-        widget=forms.CheckboxInput()
-    )
-
     class Meta:
         model = Diagnostico
         fields = ['nombre', 'fecha_realizacion', 'paciente', 'resultados_obtenidos', 'info_extra']

@@ -12,17 +12,19 @@ def diagnostico_list(request):
 def diagnostico_create(request):
     if request.method == 'POST':
         form = DiagnosticoForm(request.POST)
-        tratamiento_form = TratamientoForm(request.POST) if 'tratamiento_aplica' in request.POST else None
+        tratamiento_aplica = request.POST.get('tratamiento_aplica')  # Obtiene el valor del checkbox
+        tratamiento_form = TratamientoForm(request.POST) if tratamiento_aplica else None
 
+        if form.is_valid():
+            diagnostico = form.save(commit=False)
+            
+            if tratamiento_aplica and tratamiento_form and tratamiento_form.is_valid():
+                tratamiento = tratamiento_form.save()
+                diagnostico.tratamiento = tratamiento
 
-            # Si se selecciona tratamiento y el formulario es válido, guardarlo
-        if form.is_valid() and (tratamiento_form is None or tratamiento_form.is_valid()):
-                diagnostico = form.save(commit=False)
-                if tratamiento_form:
-                    tratamiento = tratamiento_form.save()
-                    diagnostico.tratamiento = tratamiento
-                diagnostico.save()
-                return redirect('diagnosticoList')
+            diagnostico.save()
+            return redirect('diagnosticoList')
+
 
     else:
         form = DiagnosticoForm()

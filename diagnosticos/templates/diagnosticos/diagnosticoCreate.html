@@ -1,29 +1,44 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <h2>Crear Diagnóstico</h2>
+
 <form method="POST">
     {% csrf_token %}
-    <br>
+    
+    {{ form.non_field_errors }}
+    
     {{ form.as_p }}
-    
-    <!-- Checkbox para mostrar el formulario de tratamiento -->
-    <label>
-        <input type="checkbox" id="id_tratamiento_aplica" name="tratamiento_aplica">
-        ¿Necesita tratamiento?
-    </label>
-    
+
+    <!-- Checkbox para activar el tratamiento -->
+    <p>
+        <label for="id_tratamiento_aplica">
+            <input type="checkbox" id="id_tratamiento_aplica" name="tratamiento_aplica">
+            ¿Necesita tratamiento?
+        </label>
+    </p>
+
     <!-- Sección oculta para el tratamiento -->
     <div id="tratamiento-fields" style="display: none;">
         {{ tratamiento_form.as_p }}
     </div>
     
-    <button type="submit" class="btn btn-success waves-effect waves-light">Crear</button>
-    <button type="button" class="btn btn-primary waves-effect waves-light" onClick="window.location.href='/diagnosticos'">Regresar</button>
+    <button type="submit" class="btn btn-success">Crear</button>
+    <button type="button" class="btn btn-primary" onClick="window.location.href='/diagnosticos'">Regresar</button>
 </form>
 
 <script>
-    document.getElementById("id_tratamiento_aplica").addEventListener("change", function() {
-        document.getElementById("tratamiento-fields").style.display = this.checked ? "block" : "none";
+    document.addEventListener("DOMContentLoaded", function() {
+        const checkbox = document.getElementById("id_tratamiento_aplica");
+        const tratamientoFields = document.getElementById("tratamiento-fields");
+
+        function toggleTratamiento() {
+            tratamientoFields.style.display = checkbox.checked ? "block" : "none";
+        }
+
+        checkbox.addEventListener("change", toggleTratamiento);
+        toggleTratamiento(); // Asegura que el estado se mantenga tras recargar la página
     });
 </script>
+
 {% endblock %}
