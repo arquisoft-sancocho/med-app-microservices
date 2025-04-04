@@ -11,7 +11,6 @@ class Diagnostico(models.Model):
     fecha_realizacion = models.DateField()
     paciente = models.ForeignKey(Paciente2, on_delete=models.CASCADE)
     resultados_obtenidos = models.TextField()
-    tratamiento = models.CharField(max_length=4, choices=TRATAMIENTO)
     info_extra = models.TextField()
 
     def __str__(self):
