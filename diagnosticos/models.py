@@ -2,6 +2,11 @@ from django.db import models
 from pacientes2.models import Paciente2
 
 class Diagnostico(models.Model):
+    TRATAMIENTO = [
+        ('si', 'Sí'),
+        ('no', 'No'),
+    ]
+    
     nombre = models.CharField(max_length=100)
     fecha_realizacion = models.DateField()
     paciente = models.ForeignKey(Paciente2, on_delete=models.CASCADE)

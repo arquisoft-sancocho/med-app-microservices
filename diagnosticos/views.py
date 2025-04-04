@@ -14,17 +14,15 @@ def diagnostico_create(request):
         form = DiagnosticoForm(request.POST)
         tratamiento_form = TratamientoForm(request.POST) if 'tratamiento_aplica' in request.POST else None
 
-        if form.is_valid():
-            diagnostico = create_diagnostico(form)
 
             # Si se selecciona tratamiento y el formulario es válido, guardarlo
-            if tratamiento_form and tratamiento_form.is_valid():
-                tratamiento = tratamiento_form.save(commit=False)
-                tratamiento.paciente = diagnostico.paciente  # Asociar tratamiento con el paciente del diagnóstico
-                tratamiento.save()
-
-            messages.success(request, 'Diagnóstico creado con éxito')
-            return redirect('diagnosticoList')
+        if form.is_valid() and (tratamiento_form is None or tratamiento_form.is_valid()):
+                diagnostico = form.save(commit=False)
+                if tratamiento_form:
+                    tratamiento = tratamiento_form.save()
+                    diagnostico.tratamiento = tratamiento
+                diagnostico.save()
+                return redirect('diagnosticoList')
 
     else:
         form = DiagnosticoForm()
