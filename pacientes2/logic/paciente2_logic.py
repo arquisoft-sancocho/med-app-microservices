@@ -17,12 +17,12 @@ def create_paciente2(form):
     paciente2.save()
     return paciente2
 
-def get_paciente_by_id2(paciente2_id):
+def get_paciente_by_id2(paciente_id):
     """
     Obtiene un paciente por su ID. Devuelve None si no existe.
     """
     try:
-        return Paciente2.objects.get(id=paciente2_id)
+        return Paciente2.objects.get(id=paciente_id)
     except Paciente2.DoesNotExist:
         return None
     

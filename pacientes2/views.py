@@ -21,8 +21,8 @@ def paciente_create2(request):
     
     return render(request, 'pacientes2/pacienteCreate2.html', {'form': form})
 
-def paciente_detail2(request, paciente2_id):
-    paciente2 = get_paciente_by_id2(paciente2_id)
+def paciente_detail2(request, paciente_id):
+    paciente2 = get_paciente_by_id2(paciente_id)
     if not paciente2:
         messages.error(request, "El paciente no existe")
         return redirect('pacienteList2')
