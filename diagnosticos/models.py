@@ -1,5 +1,5 @@
 from django.db import models
-from pacientes.models import Paciente
+from pacientes2.models import Paciente
 
 class Diagnostico(models.Model):
     TRATAMIENTO = [
