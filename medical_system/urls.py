@@ -23,8 +23,9 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
-    path('', include('pacientes.urls')),
-    path('', include('examenes.urls')),
+    path('', include('pacientes2.urls')),
+    path('', include('examenes2.urls')),
+    path('', include('diagnosticos.urls')),
     
 ]
 

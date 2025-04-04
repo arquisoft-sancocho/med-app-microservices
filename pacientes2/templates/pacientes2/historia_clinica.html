@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Historia Clínica de {{ paciente.nombre }}</h2>
+
+<h3>Datos del Paciente</h3>
+<p><strong>Nombre:</strong> {{ paciente.nombre }}</p>
+<p><strong>Edad:</strong> {{ paciente.edad }} años</p>
+<p><strong>Fecha de Nacimiento:</strong> {{ paciente.fecha_nacimiento }}</p>
+<p><strong>Género:</strong> {{ paciente.get_genero_display }}</p>
+<p><strong>Dirección:</strong> {{ paciente.direccion }}</p>
+<p><strong>Teléfono:</strong> {{ paciente.telefono }}</p>
+<p><strong>Tipo de Sangre:</strong> {{ paciente.get_tipo_sangre_display }}</p>
+
+<h3>Exámenes</h3>
+{% if examenes %}
+    <ul>
+    {% for examen in examenes %}
+        <li><strong>Tipo:</strong> {{ examen.get_tipo_examen_display }} | <strong>Fecha:</strong> {{ examen.fecha_realizacion }} | <strong>Resultado:</strong> {{ examen.get_resultado_display }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No hay exámenes registrados.</p>
+{% endif %}
+
+<h3>Diagnósticos</h3>
+{% if diagnosticos %}
+    <ul>
+    {% for diagnostico in diagnosticos %}
+        <li><strong>Diagnóstico:</strong> {{ diagnostico.nombre }} | <strong>Fecha:</strong> {{ diagnostico.fecha_realizacion }} | <strong>Resultados:</strong> {{ diagnostico.resultados_obtenidos }} | <strong>Tratamiento:</strong> {{ diagnostico.get_tratamiento_display }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No hay diagnósticos registrados.</p>
+{% endif %}
+
+<a href="{% url 'pacienteList2' %}" class="btn btn-primary">Volver a la lista</a>
+{% endblock %}

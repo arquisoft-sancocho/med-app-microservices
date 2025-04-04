@@ -15,7 +15,7 @@ def access_secret_version(secret_id, version_id="latest"):
         return None
 
 # Configuración para producción
-DEBUG = True
+DEBUG = False
 
 # Cargar SECRET_KEY desde Secret Manager
 SECRET_KEY = access_secret_version("django-secret-key") or SECRET_KEY
@@ -31,8 +31,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'pacientes',
-    'examenes',
+    'pacientes2',
+    'examenes2',
+    'diagnosticos',
     'storages',
 ]
 
