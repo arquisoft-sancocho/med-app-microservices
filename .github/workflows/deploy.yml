@@ -57,6 +57,13 @@ jobs:
         run: |
           netstat -tuln | grep 5432
 
+      # Ver estado de migraciones antes de aplicar cambios
+      - name: Show migrations before applying
+        env:
+          DJANGO_SETTINGS_MODULE: medical_system.settings_prod
+        run: |
+          python manage.py showmigrations
+          
       # Aplicar migraciones
       - name: Make and apply migrations
         env:
@@ -64,3 +71,11 @@ jobs:
         run: |
           chmod +x scripts/run_migrations.sh 
           ./scripts/run_migrations.sh
+
+      # Ver estado de migraciones después de aplicar cambios
+      - name: Show migrations after applying
+        env:
+          DJANGO_SETTINGS_MODULE: medical_system.settings_prod
+        run: |
+          python manage.py showmigrations
+
