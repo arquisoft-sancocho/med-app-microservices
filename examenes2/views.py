@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.urls import reverse
 from .forms import Examen2Form
-from .logic.examen2_logic import get_examenes2, create_examen2, get_examen_by_id2
+from .logic.examen2_logic import get_examenes2, create_examen2, get_examen_by_id2, delete_examen2
 
 def examen_list2(request):
     examenes = get_examenes2()
@@ -27,3 +27,12 @@ def examen_detail2(request, examen_id):
         return redirect('examenList2')
 
     return render(request, 'examenes2/examen_detail2.html', {'examen2': examen2})
+
+def examen_delete2(request, examen_id):
+    if request.method == 'POST':
+        success = delete_examen2(examen_id)
+        if success:
+            messages.success(request, 'Examen eliminado con éxito')
+        else:
+            messages.error(request, 'No se pudo eliminar el examen')
+    return redirect('examenList2')

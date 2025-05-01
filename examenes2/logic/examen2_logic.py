@@ -23,3 +23,14 @@ def get_examen_by_id2(examen_id2):
         return Examen2.objects.get(id=examen_id2)
     except Examen2.DoesNotExist:
         return None
+    
+def delete_examen2(examen_id):
+    """
+    Elimina un examen por su ID.
+    """
+    try:
+        examen = Examen2.objects.get(id=examen_id)
+        examen.delete()
+        return True
+    except Examen2.DoesNotExist:
+        return False
