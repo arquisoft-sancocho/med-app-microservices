@@ -43,3 +43,14 @@ def get_historia_clinica(paciente_id):
         "diagnosticos": diagnosticos
     }
     
+def delete_paciente2(paciente_id):
+    """
+    Elimina un paciente por su ID.
+    """
+    try:
+        paciente = Paciente2.objects.get(id=paciente_id)
+        paciente.delete()
+        return True
+    except Paciente2.DoesNotExist:
+        return False
+    

@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.urls import reverse
 from .forms import Paciente2Form
 from django.http import HttpResponse
-from .logic.paciente2_logic import get_pacientes2, create_paciente2, get_paciente_by_id2, get_historia_clinica
+from .logic.paciente2_logic import get_pacientes2, create_paciente2, get_paciente_by_id2, get_historia_clinica, delete_paciente2
 
 def paciente_list2(request):
     pacientes2 = get_pacientes2()
@@ -37,3 +37,12 @@ def historia_clinica_view(request, paciente_id):
         return HttpResponse("Paciente no encontrado", status=404)
 
     return render(request, 'pacientes2/historia_clinica.html', historia)
+
+def paciente_delete2(request, paciente_id):
+    if request.method == 'POST':
+        success = delete_paciente2(paciente_id)
+        if success:
+            messages.success(request, 'Paciente eliminado con éxito')
+        else:
+            messages.error(request, 'No se pudo eliminar el paciente')
+    return redirect('pacienteList2')
