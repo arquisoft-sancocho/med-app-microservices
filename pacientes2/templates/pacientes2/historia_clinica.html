@@ -1,38 +1,119 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Historia Clínica de {{ paciente.nombre }}</h2>
+<div class="content">
+    <div class="container">
+        <div class="page-header-title">
+            <h2 class="page-title">Historia Clínica de {{ paciente.nombre }}</h2>
+        </div>
 
-<h3>Datos del Paciente</h3>
-<p><strong>Nombre:</strong> {{ paciente.nombre }}</p>
-<p><strong>Edad:</strong> {{ paciente.edad }} años</p>
-<p><strong>Fecha de Nacimiento:</strong> {{ paciente.fecha_nacimiento }}</p>
-<p><strong>Género:</strong> {{ paciente.get_genero_display }}</p>
-<p><strong>Dirección:</strong> {{ paciente.direccion }}</p>
-<p><strong>Teléfono:</strong> {{ paciente.telefono }}</p>
-<p><strong>Tipo de Sangre:</strong> {{ paciente.get_tipo_sangre_display }}</p>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h3>Datos del Paciente</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Nombre:</strong> {{ paciente.nombre }}</p>
+                        <p><strong>Edad:</strong> {{ paciente.edad }} años</p>
+                        <p><strong>Fecha de Nacimiento:</strong> {{ paciente.fecha_nacimiento }}</p>
+                        <p><strong>Género:</strong> {{ paciente.get_genero_display }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Dirección:</strong> {{ paciente.direccion }}</p>
+                        <p><strong>Teléfono:</strong> {{ paciente.telefono }}</p>
+                        <p><strong>Tipo de Sangre:</strong> {{ paciente.get_tipo_sangre_display }}</p>
+                        <p><strong>Fecha de Registro:</strong> {{ paciente.fecha_registro }}</p>
+                    </div>
+                </div>
 
-<h3>Exámenes</h3>
-{% if examenes %}
-    <ul>
-    {% for examen in examenes %}
-        <li><strong>Tipo:</strong> {{ examen.get_tipo_examen_display }} | <strong>Fecha:</strong> {{ examen.fecha_realizacion }} | <strong>Resultado:</strong> {{ examen.get_resultado_display }}</li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No hay exámenes registrados.</p>
-{% endif %}
+                <hr>
 
-<h3>Diagnósticos</h3>
-{% if diagnosticos %}
-    <ul>
-    {% for diagnostico in diagnosticos %}
-        <li><strong>Diagnóstico:</strong> {{ diagnostico.nombre }} | <strong>Fecha:</strong> {{ diagnostico.fecha_realizacion }} | <strong>Resultados:</strong> {{ diagnostico.resultados_obtenidos }} | <strong>Tratamiento:</strong> {{ diagnostico.get_tratamiento_display }}</li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No hay diagnósticos registrados.</p>
-{% endif %}
+                <h3>Exámenes</h3>
+                {% if examenes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Fecha</th>
+                                    <th>Resultado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for examen in examenes %}
+                                <tr>
+                                    <td>{{ examen.get_tipo_examen_display }}</td>
+                                    <td>{{ examen.fecha_realizacion|date:"d/m/Y" }}</td>
+                                    <td>{{ examen.resultado|truncatechars:50 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">No hay exámenes registrados.</div>
+                {% endif %}
 
-<a href="{% url 'pacienteList2' %}" class="btn btn-primary">Volver a la lista</a>
+                <h3>Diagnósticos</h3>
+                {% if diagnosticos %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Fecha</th>
+                                    <th>Resultados</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for diagnostico in diagnosticos %}
+                                <tr>
+                                    <td>{{ diagnostico.nombre }}</td>
+                                    <td>{{ diagnostico.fecha_realizacion|date:"d/m/Y" }}</td>
+                                    <td>{{ diagnostico.resultados_obtenidos|truncatechars:50 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">No hay diagnósticos registrados.</div>
+                {% endif %}
+
+                <h3>Cirugías</h3>
+                {% if cirugias %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Fecha</th>
+                                    <th>Resultado</th>
+                                    <th>Estado Postoperatorio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cirugia in cirugias %}
+                                <tr>
+                                    <td>{{ cirugia.get_tipo_display }}</td>
+                                    <td>{{ cirugia.fecha|date:"d/m/Y" }}</td>
+                                    <td>{{ cirugia.resultado|truncatechars:50 }}</td>
+                                    <td>{{ cirugia.get_estado_postoperatorio_display }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">No hay cirugías registradas.</div>
+                {% endif %}
+
+                <div class="text-center" style="margin-top: 20px;">
+                    <a href="{% url 'pacienteList2' %}" class="btn btn-primary">
+                        <i class="fa fa-arrow-left"></i> Volver a la lista
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

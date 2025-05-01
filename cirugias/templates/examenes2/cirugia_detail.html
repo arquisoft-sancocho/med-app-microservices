@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content">
+    <div class="container">
+        <div class="page-header-title">
+            <h2 class="page-title">Detalles de la Cirugía</h2>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Nombre:</strong> {{ cirugia.nombre }}</p>
+                        <p><strong>Tipo de cirugía:</strong> {{ cirugia.get_tipo_display }}</p>
+                        <p><strong>Paciente:</strong> {{ cirugia.paciente.nombre }}</p>
+                        <p><strong>Fecha:</strong> {{ cirugia.fecha|date:"d/m/Y" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Estado postoperatorio:</strong> {{ cirugia.get_estado_postoperatorio_display }}</p>
+                        <p><strong>Resultado:</strong></p>
+                        <div class="well">{{ cirugia.resultado }}</div>
+                    </div>
+                </div>
+
+                {% if cirugia.complicaciones %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4>Complicaciones</h4>
+                        <div class="well">{{ cirugia.complicaciones }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if cirugia.notas_quirurgicas %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4>Notas Quirúrgicas</h4>
+                        <div class="well">{{ cirugia.notas_quirurgicas }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="text-center" style="margin-top: 20px;">
+                    <a href="{% url 'cirugiaList' %}" class="btn btn-primary">
+                        <i class="fa fa-arrow-left"></i> Volver a la lista
+                    </a>
+                    <a href="{% url 'cirugiaUpdate' cirugia.id %}" class="btn btn-warning">
+                        <i class="fa fa-edit"></i> Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
