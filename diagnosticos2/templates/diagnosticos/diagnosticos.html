@@ -28,6 +28,7 @@
                             <th>Nombre</th>
                             <th>Fecha de realización</th>
                             <th>Paciente</th>
+                            <th>Eliminar</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -37,6 +38,15 @@
                             <td><a href="{% url 'diagnosticoDetail' diagnostico.id %}">{{ diagnostico.nombre}}</a></td>
                             <td>{{ diagnostico.fecha_realizacion }}</td>
                             <td>{{diagnostico.paciente.nombre}}</td>
+                            <td>
+                                <form method="POST" action="{% url 'diagnosticoDelete' diagnostico.id %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger waves-effect waves-light" 
+                                            onclick="return confirm('¿Estás seguro de que quieres eliminar este diagnóstico y todos sus tratamientos asociados?');">
+                                        Eliminar
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                         {% endfor %}
 

@@ -24,3 +24,15 @@ def get_diagnostico_by_id(diagnostico_id):
     except Diagnostico2.DoesNotExist:
         return None
     
+def delete_diagnostico(diagnostico_id):
+    """
+    Elimina un diagnóstico y sus tratamientos asociados
+    """
+    try:
+        diagnostico = Diagnostico2.objects.get(id=diagnostico_id)
+        # Elimina todos los tratamientos asociados primero
+        diagnostico.tratamientos.all().delete()
+        diagnostico.delete()
+        return True
+    except Diagnostico2.DoesNotExist:
+        return False

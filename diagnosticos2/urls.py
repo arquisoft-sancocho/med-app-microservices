@@ -7,4 +7,5 @@ urlpatterns = [
     path('diagnosticos/diagnosticoCreate/', csrf_exempt(views.diagnostico_create), name='diagnosticoCreate'),
     path('diagnostico/<int:diagnostico_id>/', views.diagnostico_detail, name='diagnosticoDetail'),
     path('diagnostico/<int:diagnostico_id>/add_tratamiento/', views.add_tratamiento, name='addTratamiento'),
+    path('diagnostico/<int:diagnostico_id>/delete/', views.diagnostico_delete, name='diagnosticoDelete'),
 ]
