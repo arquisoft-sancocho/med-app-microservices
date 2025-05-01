@@ -21,12 +21,14 @@ steps:
       - '--add-cloudsql-instances=${PROJECT_ID}:${_REGION}:django-db-instance'
       - '--set-env-vars=DJANGO_SETTINGS_MODULE=medical_system.settings_prod'
 
-  # Integrar Actualización de Contenedores en VMs
-  - name: Update Containers on GCE VMs
-    run: |
-      echo "Ejecutando script para actualizar contenedores en VMs..."
-      bash scripts/update_gce_containers.sh
-
+  # Ejecutar script adicional en bash
+  - name: 'gcr.io/cloud-builders/bash'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Ejecutando script para actualizar contenedores en VMs..."
+        bash scripts/update_gce_containers.sh
 
 substitutions:
   _SERVICE_NAME: app-medica
