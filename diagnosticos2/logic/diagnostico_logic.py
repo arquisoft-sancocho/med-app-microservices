@@ -1,10 +1,10 @@
-from ..models import Diagnostico
+from ..models import Diagnostico2
 
 def get_diagnosticos():
     """
     Obtener todos los diagnosticos.
     """
-    queryset = Diagnostico.objects.all()
+    queryset = Diagnostico2.objects.all()
     return (queryset)
 
 def create_diagnostico(form):
@@ -20,7 +20,7 @@ def get_diagnostico_by_id(diagnostico_id):
     Obtiene un diagnostico por su ID. Devuelve None si no existe.
     """
     try:
-        return Diagnostico.objects.get(id=diagnostico_id)
-    except Diagnostico.DoesNotExist:
+        return Diagnostico2.objects.get(id=diagnostico_id)
+    except Diagnostico2.DoesNotExist:
         return None
     

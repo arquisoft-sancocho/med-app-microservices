@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .forms import DiagnosticoForm, TratamientoForm
 from .logic.diagnostico_logic import get_diagnosticos, create_diagnostico, get_diagnostico_by_id
-from .models import Diagnostico, Tratamiento
+from .models import Diagnostico2, Tratamiento2
 
 def diagnostico_list(request):
     diagnosticos = get_diagnosticos()
@@ -34,7 +34,7 @@ def diagnostico_detail(request, diagnostico_id):
     })
 
 def add_tratamiento(request, diagnostico_id):
-    diagnostico = get_object_or_404(Diagnostico, id=diagnostico_id)
+    diagnostico = get_object_or_404(Diagnostico2, id=diagnostico_id)
     
     if request.method == 'POST':
         form = TratamientoForm(request.POST)
