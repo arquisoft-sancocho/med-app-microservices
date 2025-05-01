@@ -21,6 +21,15 @@ steps:
       - '--add-cloudsql-instances=${PROJECT_ID}:${_REGION}:django-db-instance'
       - '--set-env-vars=DJANGO_SETTINGS_MODULE=medical_system.settings_prod'
 
+  # Ejecutar el script para actualizar contenedores en VMs (o lo que necesites)
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Ejecutando script de actualización en VMs..."
+        bash scripts/update_gce_containers.sh
+
 substitutions:
   _SERVICE_NAME: app-medica
   _REGION: us-central1
