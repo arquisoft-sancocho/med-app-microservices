@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class VariablesConfig(AppConfig):
-    name = 'diagnosticos'
+    name = 'diagnosticos2'
