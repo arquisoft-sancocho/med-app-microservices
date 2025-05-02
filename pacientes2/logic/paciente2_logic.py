@@ -49,6 +49,27 @@ def get_historia_clinica(paciente_id):
         "consultas": consultas,
     }
     
+def get_informacion_critica(paciente_id):
+    """
+    Obtiene la información crítica de un paciente.
+    """
+    paciente = get_paciente_by_id2(paciente_id)
+    if not paciente:
+        return None
+    
+    examenes = Examen2.objects.filter(paciente=paciente)
+    diagnosticos = Diagnostico2.objects.filter(paciente=paciente)
+    cirugias = Cirugia.objects.filter(paciente=paciente)
+    consultas = ConsultaMedica.objects.filter(paciente= paciente)
+    
+    return {
+        "paciente": paciente,
+        "examenes": examenes,
+        "diagnosticos": diagnosticos,
+        "cirugias": cirugias,
+        "consultas": consultas,
+    }
+    
 def delete_paciente2(paciente_id):
     """
     Elimina un paciente por su ID.

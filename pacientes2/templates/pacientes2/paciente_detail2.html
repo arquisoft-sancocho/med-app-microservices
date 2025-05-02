@@ -12,5 +12,6 @@
 <p><strong>Fecha de Registro:</strong> {{ paciente2.fecha_registro}}</p>
 
 <a href="{% url 'historiaClinica' paciente2.id %}" class="btn btn-info">Ver Historia Clínica</a>
+<a href="{% url 'informacionCritica' paciente2.id %}" class="btn btn-info">Ver Información Crítica</a>
 <a href="{% url 'pacienteList2' %}" class="btn btn-primary">Volver a la lista</a>
 {% endblock %}
