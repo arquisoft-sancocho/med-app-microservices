@@ -28,11 +28,11 @@ steps:
         # Si tu contenedor no usa el puerto 8080, añade: ,httpGet.port=TU_PUERTO_DJANGO
 
         # Readiness Probe (Sonda de Disponibilidad)
-      - '--readiness-probe'
+      - '--startup-probe'
         # Parámetros: ruta, puerto (opcional, default 8080), delay inicial, timeout, periodo, umbral de fallos
         # Ajusta los valores según necesites. Delay inicial más corto para readiness.
       - 'httpGet.path=/health/ready,initialDelaySeconds=5,timeoutSeconds=1,periodSeconds=5,failureThreshold=3'
-      
+
 substitutions:
   _SERVICE_NAME: app-medica
   _REGION: us-central1
