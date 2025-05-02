@@ -23,7 +23,7 @@ def cirugia_create(request):
 def cirugia_detail(request, cirugia_id):
     cirugia = get_cirugia_by_id(cirugia_id)
     if not cirugia:
-        messages.error(request, "El cirugia no existe")
+        messages.error(request, "La cirugia no existe")
         return redirect('cirugiaList')
 
     return render(request, 'cirugias/cirugia_detail.html', {'cirugia': cirugia})

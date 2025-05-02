@@ -39,7 +39,7 @@
                             <td><a href="{% url 'cirugiaDetail' cirugia.id %}">{{ cirugia.nombre}}</a></td>
                             <td>{{ cirugia.tipo }}</td>
                             <td>{{ cirugia.fecha }}</td>
-                            <td>{{cirugia.paciente.nombre}}</td>
+                            <td>{{ cirugia.paciente.nombre}}</td>
                             <td>
                                 <form method="POST" action="{% url 'cirugiaDelete' cirugia.id %}" style="display: inline;">
                                     {% csrf_token %}
