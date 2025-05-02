@@ -6,122 +6,98 @@
         <div class="page-header-title">
             <h2 class="page-title">Información Crítica de {{ paciente.nombre }}</h2>
             <div class="alert alert-danger">
-                <strong>¡ATENCIÓN!</strong> Esta vista muestra solo información crítica del paciente.
+                <i class="fa fa-exclamation-triangle"></i> <strong>VISTA CRÍTICA</strong> - Solo información médica relevante
             </div>
         </div>
 
         <div class="panel panel-default">
             <div class="panel-body">
-                <!-- Consultas Médicas -->
-                <h3>Consultas Médicas</h3>
-                {% if consultas %}
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>Tipo</th>
-                                <th>Fecha</th>
-                                <th>Motivo</th>
-                                <th>Prescripciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for consulta in consultas %}
-                            <tr>
-                                <td>{{ consulta.get_tipo_consulta_display }}</td>
-                                <td>{{ consulta.fecha|date:"d/m/Y H:i" }}</td>
-                                <td>{{ consulta.motivo }}</td>
-                                <td>{{ consulta.prescripciones.count }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                {% else %}
-                <div class="alert alert-info">No hay consultas registradas.</div>
-                {% endif %}
-
-                <!-- Cirugías -->
-                <h3>Cirugías</h3>
-                {% if cirugias %}
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>Tipo</th>
-                                <th>Fecha</th>
-                                <th>Resultado</th>
-                                <th>Estado Postoperatorio</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for cirugia in cirugias %}
-                            <tr>
-                                <td>{{ cirugia.get_tipo_display }}</td>
-                                <td>{{ cirugia.fecha|date:"d/m/Y" }}</td>
-                                <td>{{ cirugia.resultado }}</td>
-                                <td>{{ cirugia.get_estado_postoperatorio_display }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                {% else %}
-                <div class="alert alert-info">No hay cirugías registradas.</div>
-                {% endif %}
-
                 <!-- Exámenes -->
                 <h3>Exámenes</h3>
                 {% if examenes %}
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>Tipo</th>
-                                <th>Fecha</th>
-                                <th>Resultado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for examen in examenes %}
-                            <tr>
-                                <td>{{ examen.get_tipo_examen_display }}</td>
-                                <td>{{ examen.fecha_realizacion|date:"d/m/Y" }}</td>
-                                <td>{{ examen.resultado }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                    {% for examen in examenes %}
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <strong>{{ examen.get_tipo_examen_display }}</strong> - {{ examen.fecha_realizacion|date:"d/m/Y" }}
+                            <a href="{% url 'examenDetail2' examen.id %}" class="btn btn-xs btn-default pull-right">
+                                <i class="fa fa-eye"></i> Ver detalle
+                            </a>
+                        </div>
+                        <div class="panel-body">
+                            <p><strong>Resultado:</strong> {{ examen.resultado }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
                 {% else %}
-                <div class="alert alert-info">No hay exámenes registrados.</div>
+                    <div class="alert alert-info">No hay exámenes registrados.</div>
                 {% endif %}
 
                 <!-- Diagnósticos -->
                 <h3>Diagnósticos</h3>
                 {% if diagnosticos %}
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Fecha</th>
-                                <th>Resultados</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for diagnostico in diagnosticos %}
-                            <tr>
-                                <td>{{ diagnostico.nombre }}</td>
-                                <td>{{ diagnostico.fecha_realizacion|date:"d/m/Y" }}</td>
-                                <td>{{ diagnostico.resultados_obtenidos }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                    {% for diagnostico in diagnosticos %}
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            <strong>{{ diagnostico.nombre }}</strong> - {{ diagnostico.fecha_realizacion|date:"d/m/Y" }}
+                            <a href="{% url 'diagnosticoDetail' diagnostico.id %}" class="btn btn-xs btn-default pull-right">
+                                <i class="fa fa-eye"></i> Ver detalle
+                            </a>
+                        </div>
+                        <div class="panel-body">
+                            <p><strong>Resultados:</strong> {{ diagnostico.resultados_obtenidos }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
                 {% else %}
-                <div class="alert alert-info">No hay diagnósticos registrados.</div>
+                    <div class="alert alert-info">No hay diagnósticos registrados.</div>
+                {% endif %}
+
+                <!-- Consultas Médicas -->
+                <h3>Consultas Médicas</h3>
+                {% if consultas %}
+                    {% for consulta in consultas %}
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <strong>{{ consulta.get_tipo_consulta_display }}</strong> - {{ consulta.fecha|date:"d/m/Y H:i" }}
+                            <span class="badge">{{ consulta.prescripciones.count }} prescripciones</span>
+                            <a href="{% url 'consultaDetail' consulta.id %}" class="btn btn-xs btn-default pull-right">
+                                <i class="fa fa-eye"></i> Ver detalle
+                            </a>
+                        </div>
+                        <div class="panel-body">
+                            <p><strong>Motivo:</strong> {{ consulta.motivo }}</p>
+                            {% if consulta.informacion_extra %}
+                            <p><strong>Información adicional:</strong> {{ consulta.informacion_extra }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-info">No hay consultas médicas registradas.</div>
+                {% endif %}
+
+                <!-- Cirugías -->
+                <h3>Cirugías</h3>
+                {% if cirugias %}
+                    {% for cirugia in cirugias %}
+                    <div class="panel panel-danger">
+                        <div class="panel-heading">
+                            <strong>{{ cirugia.get_tipo_display }}</strong> - {{ cirugia.fecha|date:"d/m/Y" }}
+                            <a href="{% url 'cirugiaDetail' cirugia.id %}" class="btn btn-xs btn-default pull-right">
+                                <i class="fa fa-eye"></i> Ver detalle
+                            </a>
+                        </div>
+                        <div class="panel-body">
+                            <p><strong>Resultado:</strong> {{ cirugia.resultado }}</p>
+                            <p><strong>Estado postoperatorio:</strong> {{ cirugia.get_estado_postoperatorio_display }}</p>
+                            {% if cirugia.complicaciones %}
+                            <p><strong>Complicaciones:</strong> {{ cirugia.complicaciones }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-info">No hay cirugías registradas.</div>
                 {% endif %}
 
                 <div class="text-center" style="margin-top: 20px;">
@@ -135,12 +111,33 @@
 </div>
 
 <style>
-    .table thead th {
+    .panel-danger .panel-heading {
         background-color: #d9534f;
         color: white;
+        border-color: #d9534f;
+    }
+    .panel-primary .panel-heading {
+        background-color: #337ab7;
+        color: white;
+        border-color: #337ab7;
+    }
+    .panel-warning .panel-heading {
+        background-color: #f0ad4e;
+        color: white;
+        border-color: #f0ad4e;
+    }
+    .panel-info .panel-heading {
+        background-color: #5bc0de;
+        color: white;
+        border-color: #5bc0de;
     }
     .alert-danger {
         border-left: 5px solid #d9534f;
+    }
+    .badge {
+        margin-left: 10px;
+        background-color: white;
+        color: #333;
     }
 </style>
 {% endblock %}
