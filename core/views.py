@@ -2,7 +2,7 @@ import logging
 from django.http import HttpResponse, JsonResponse
 from django.db import connection, OperationalError
 
-logger = logging.getLogger(_name_)
+logger = logging.getLogger(__name__)
 
 def readiness_check(request):
     db_ready = False
