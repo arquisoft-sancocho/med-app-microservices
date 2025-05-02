@@ -1,6 +1,8 @@
 from ..models import Paciente2
 from examenes2.models import Examen2
 from diagnosticos2.models import Diagnostico2
+from cirugias.models import Cirugia
+from consultas.models import ConsultaMedica
 
 def get_pacientes2():
     """
@@ -36,11 +38,15 @@ def get_historia_clinica(paciente_id):
     
     examenes = Examen2.objects.filter(paciente=paciente)
     diagnosticos = Diagnostico2.objects.filter(paciente=paciente)
+    cirugias = Cirugia.objects.filter(paciente=paciente)
+    consultas = ConsultaMedica.objects.filter(paciente= paciente)
     
     return {
         "paciente": paciente,
         "examenes": examenes,
-        "diagnosticos": diagnosticos
+        "diagnosticos": diagnosticos,
+        "cirugias": cirugias,
+        "consultas": consultas,
     }
     
 def delete_paciente2(paciente_id):

@@ -36,6 +36,7 @@
                                     <th>Tipo</th>
                                     <th>Fecha</th>
                                     <th>Resultado</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -44,6 +45,11 @@
                                     <td>{{ examen.get_tipo_examen_display }}</td>
                                     <td>{{ examen.fecha_realizacion|date:"d/m/Y" }}</td>
                                     <td>{{ examen.resultado|truncatechars:50 }}</td>
+                                    <td>
+                                        <a href="{% url 'examenDetail2' examen.id %}" class="btn btn-info btn-sm">
+                                            <i class="fa fa-eye"></i> Ver
+                                        </a>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -62,6 +68,7 @@
                                     <th>Nombre</th>
                                     <th>Fecha</th>
                                     <th>Resultados</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -70,6 +77,11 @@
                                     <td>{{ diagnostico.nombre }}</td>
                                     <td>{{ diagnostico.fecha_realizacion|date:"d/m/Y" }}</td>
                                     <td>{{ diagnostico.resultados_obtenidos|truncatechars:50 }}</td>
+                                    <td>
+                                        <a href="{% url 'diagnosticoDetail' diagnostico.id %}" class="btn btn-info btn-sm">
+                                            <i class="fa fa-eye"></i> Ver
+                                        </a>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -77,6 +89,40 @@
                     </div>
                 {% else %}
                     <div class="alert alert-info">No hay diagnósticos registrados.</div>
+                {% endif %}
+
+                <h3>Consultas Médicas</h3>
+                {% if consultas %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Fecha</th>
+                                    <th>Motivo</th>
+                                    <th>Prescripciones</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for consulta in consultas %}
+                                <tr>
+                                    <td>{{ consulta.get_tipo_consulta_display }}</td>
+                                    <td>{{ consulta.fecha|date:"d/m/Y H:i" }}</td>
+                                    <td>{{ consulta.motivo|truncatechars:30 }}</td>
+                                    <td>{{ consulta.prescripciones.count }}</td>
+                                    <td>
+                                        <a href="{% url 'consultaDetail' consulta.id %}" class="btn btn-info btn-sm">
+                                            <i class="fa fa-eye"></i> Ver
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">No hay consultas médicas registradas.</div>
                 {% endif %}
 
                 <h3>Cirugías</h3>
@@ -89,6 +135,7 @@
                                     <th>Fecha</th>
                                     <th>Resultado</th>
                                     <th>Estado Postoperatorio</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -98,6 +145,11 @@
                                     <td>{{ cirugia.fecha|date:"d/m/Y" }}</td>
                                     <td>{{ cirugia.resultado|truncatechars:50 }}</td>
                                     <td>{{ cirugia.get_estado_postoperatorio_display }}</td>
+                                    <td>
+                                        <a href="{% url 'cirugiaDetail' cirugia.id %}" class="btn btn-info btn-sm">
+                                            <i class="fa fa-eye"></i> Ver
+                                        </a>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
