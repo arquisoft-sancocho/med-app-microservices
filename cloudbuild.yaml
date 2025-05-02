@@ -20,7 +20,7 @@ steps:
       - '--allow-unauthenticated'
       - '--add-cloudsql-instances=${PROJECT_ID}:${_REGION}:django-db-instance'
       - '--set-env-vars=DJANGO_SETTINGS_MODULE=medical_system.settings_prod'
-      - '--readiness-probe-http-path=/health/ready' # Ruta para la sonda de disponibilidad
+      - '--readiness-probe-http-path=/health/ready' 
       - '--liveness-probe-http-path=/health/live'
 
 substitutions:
