@@ -20,9 +20,19 @@ steps:
       - '--allow-unauthenticated'
       - '--add-cloudsql-instances=${PROJECT_ID}:${_REGION}:django-db-instance'
       - '--set-env-vars=DJANGO_SETTINGS_MODULE=medical_system.settings_prod'
-      - '--readiness-probe=http-get=/health/ready' 
-      - '--liveness-probe=http-get=/health/live'
+    # Liveness Probe (Sonda de Actividad)
+      - '--liveness-probe'
+        # Parámetros: ruta, puerto (opcional, default 8080), delay inicial, timeout, periodo, umbral de fallos
+        # Ajusta los valores según necesites. Estos son ejemplos razonables.
+      - 'httpGet.path=/health/live,initialDelaySeconds=15,timeoutSeconds=2,periodSeconds=10,failureThreshold=3'
+        # Si tu contenedor no usa el puerto 8080, añade: ,httpGet.port=TU_PUERTO_DJANGO
 
+        # Readiness Probe (Sonda de Disponibilidad)
+      - '--readiness-probe'
+        # Parámetros: ruta, puerto (opcional, default 8080), delay inicial, timeout, periodo, umbral de fallos
+        # Ajusta los valores según necesites. Delay inicial más corto para readiness.
+      - 'httpGet.path=/health/ready,initialDelaySeconds=5,timeoutSeconds=1,periodSeconds=5,failureThreshold=3'
+      
 substitutions:
   _SERVICE_NAME: app-medica
   _REGION: us-central1
