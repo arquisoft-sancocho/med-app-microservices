@@ -27,6 +27,7 @@ urlpatterns = [
     path('', include('examenes2.urls')),
     path('', include('diagnosticos2.urls')),
     path('', include('cirugias.urls')),
+    path('', include('consultas.urls')),
     path('', include('core.urls')),  # Así /health/ queda en la raíz
     
 ]

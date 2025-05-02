@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content">
+    <div class="container">
+        <div class="page-header-title">
+            <h2 class="page-title">Detalles de la Consulta Médica</h2>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Nombre:</strong> {{ consulta.nombre }}</p>
+                        <p><strong>Tipo de consulta:</strong> {{ consulta.get_tipo_consulta_display }}</p>
+                        <p><strong>Paciente:</strong> {{ consulta.paciente.nombre }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Fecha y hora:</strong> {{ consulta.fecha|date:"d/m/Y H:i" }}</p>
+                        <p><strong>Motivo:</strong> {{ consulta.motivo }}</p>
+                    </div>
+                </div>
+
+                {% if consulta.informacion_extra %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4>Información Adicional</h4>
+                        <div class="well">{{ consulta.informacion_extra }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <h3>Prescripciones Médicas</h3>
+                {% if prescripciones %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Medicamento</th>
+                                <th>Dosis</th>
+                                <th>Vía</th>
+                                <th>Frecuencia</th>
+                                <th>Período</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for prescripcion in prescripciones %}
+                            <tr>
+                                <td>{{ prescripcion.medicamento }}</td>
+                                <td>{{ prescripcion.dosis }}</td>
+                                <td>{{ prescripcion.get_via_administracion_display }}</td>
+                                <td>{{ prescripcion.get_frecuencia_display }}</td>
+                                <td>
+                                    {{ prescripcion.fecha_inicio|date:"d/m/Y" }}
+                                    {% if prescripcion.fecha_fin %}
+                                    - {{ prescripcion.fecha_fin|date:"d/m/Y" }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">No hay prescripciones asociadas a esta consulta.</div>
+                {% endif %}
+
+                <div class="text-center" style="margin-top: 20px;">
+                    <a href="{% url 'addPrescripcion' consulta.id %}" class="btn btn-primary">
+                        <i class="fa fa-plus"></i> Añadir Prescripción
+                    </a>
+                    <a href="{% url 'consultaList' %}" class="btn btn-default">
+                        <i class="fa fa-arrow-left"></i> Volver a la lista
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
