@@ -3,11 +3,15 @@ from django.contrib import messages
 from django.urls import reverse
 from .forms import CirugiaForm
 from .logic.cirugia_logic import get_cirugia_by_id, get_cirugias, create_cirugia, delete_cirugia
+from django.contrib.auth.decorators import login_required, permission_required
 
+@login_required
 def cirugia_list(request):
     cirugias = get_cirugias()
     return render(request, 'cirugias/cirugias.html', {'cirugia_list': cirugias})
 
+@login_required
+# @permission_required('cirugias.add_cirugia', raise_exception=True)
 def cirugia_create(request):
     if request.method == 'POST':
         form = CirugiaForm(request.POST)
@@ -17,9 +21,10 @@ def cirugia_create(request):
             return redirect('cirugiaList')
     else:
         form = CirugiaForm()
-    
+
     return render(request, 'cirugias/cirugiaCreate.html', {'form': form})
 
+@login_required
 def cirugia_detail(request, cirugia_id):
     cirugia = get_cirugia_by_id(cirugia_id)
     if not cirugia:
@@ -28,6 +33,8 @@ def cirugia_detail(request, cirugia_id):
 
     return render(request, 'cirugias/cirugia_detail.html', {'cirugia': cirugia})
 
+@login_required
+@permission_required('cirugias.delete_cirugia', raise_exception=True)
 def cirugia_delete(request, cirugia_id):
     if request.method == 'POST':
         success = delete_cirugia(cirugia_id)
@@ -35,4 +42,7 @@ def cirugia_delete(request, cirugia_id):
             messages.success(request, 'Cirugia eliminado con éxito')
         else:
             messages.error(request, 'No se pudo eliminar el cirugia')
-    return redirect('cirugiaList')
+        return redirect('cirugiaList')
+    else:
+        messages.warning(request, 'Método no permitido para eliminar cirugía.')
+        return redirect('cirugiaList')

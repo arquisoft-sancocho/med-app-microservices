@@ -3,25 +3,31 @@ import os
 import google.auth
 from google.cloud import secretmanager
 
-# Cargar secretos desde Secret Manager
-def access_secret_version(secret_id, version_id="latest"):
+# Improved secret manager access with better error handling
+def access_secret_version(secret_id, version_id="latest", fallback=None):
     try:
         client = secretmanager.SecretManagerServiceClient()
         name = f"projects/arquisoft-453601/secrets/{secret_id}/versions/{version_id}"
         response = client.access_secret_version(request={"name": name})
         return response.payload.data.decode("UTF-8")
     except Exception as e:
-        print(f"Error accediendo al secreto {secret_id}: {e}")
-        return None
+        print(f"Error accessing secret {secret_id}: {e}")
+        return fallback
 
 # Configuración para producción
-DEBUG = True
+DEBUG = True  # Set to False for production
 
 # Cargar SECRET_KEY desde Secret Manager
-SECRET_KEY = access_secret_version("django-secret-key") or SECRET_KEY
+SECRET_KEY = access_secret_version("django-secret-key", fallback=SECRET_KEY)
 
 # Permitir hosts de Cloud Run
 ALLOWED_HOSTS = ['*']
+
+# CSRF configuration for Cloud Run
+CSRF_TRUSTED_ORIGINS = [
+    'https://app-medica-849622588540.us-central1.run.app',
+    'https://*.run.app',
+]
 
 # Application definition
 INSTALLED_APPS = [
