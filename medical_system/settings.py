@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'cirugias',
     'consultas',
     'core',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middleware.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'medical_system.urls'
@@ -83,11 +86,11 @@ WSGI_APPLICATION = 'medical_system.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'name_db',
-        'USER': 'user_db',
-        'PASSWORD': 'user_password',
-        'HOST': 'localhost',
-        'PORT': '',
+        'NAME': 'appmedica',
+        'USER': 'appmedica',
+        'PASSWORD': 'appmedica',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
@@ -136,7 +139,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Extra places for collectstatic to find static files.
@@ -146,3 +148,27 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Login URL - Where to redirect users if login is required
+LOGIN_URL = 'login' # This should match the URL name from django.contrib.auth.urls
+
+# Where to redirect after logout
+LOGOUT_REDIRECT_URL = '/'  # Redirect to home page after logout
+
+# URLs that do not require login
+LOGIN_EXEMPT_URLS = [
+    reverse_lazy('login'),
+    reverse_lazy('admin:login'), # Allow access to admin login
+    # Add other URLs if needed (e.g., password reset)
+    # reverse_lazy('password_reset'),
+    # reverse_lazy('password_reset_done'),
+    # reverse_lazy('password_reset_confirm', kwargs={'uidb64': '', 'token': ''}), # Need placeholders
+    # reverse_lazy('password_reset_complete'),
+    # Any public-facing pages like a landing page or API endpoints
+    # '/public-page/',
+]

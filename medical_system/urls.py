@@ -19,17 +19,25 @@ from django.conf.urls.static import static
 
 from django.conf import settings
 from . import views
+from core import views as core_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index),
+    path('', views.index, name='index'),
+    # Include app-specific URLs
     path('', include('pacientes2.urls')),
     path('', include('examenes2.urls')),
-    path('', include('diagnosticos2.urls')),
-    path('', include('cirugias.urls')),
-    path('', include('consultas.urls')),
-    path('', include('core.urls')),  # Así /health/ queda en la raíz
-    
+    path('diagnosticos/', include('diagnosticos2.urls')), # Prefix to avoid conflict if needed
+    path('cirugias/', include('cirugias.urls')),       # Prefix to avoid conflict if needed
+    path('consultas/', include('consultas.urls')),     # Prefix to avoid conflict if needed
+    path('health/', include('core.urls')), # Health checks
+
+    # User management URLs with a dedicated path
+    path('users/', core_views.user_list, name='user_list'),
+    path('users/create/', core_views.user_create, name='user_create'),
+
+    # Add Django's built-in auth URLs (provides login, logout, password management)
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
 
 if settings.DEBUG:

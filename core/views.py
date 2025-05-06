@@ -1,6 +1,10 @@
 import logging
 from django.http import HttpResponse # JsonResponse no se usa, se puede quitar si quieres
 from django.db import connection, OperationalError
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
+from .forms import UserCreateForm
 
 # --- CORREGIDO: Usar doble guion bajo para _name_ ---
 logger = logging.getLogger(__name__)
@@ -39,3 +43,36 @@ def liveness_check(request):
     # Simplemente devuelve 200 OK para indicar que el proceso está vivo.
     logger.debug("Liveness probe successful.") # Log opcional
     return HttpResponse("Alive", status=200, content_type="text/plain")
+
+# User management views for admin users
+
+def is_admin(user):
+    """Check if the user is an admin (has staff status or is in admin group)"""
+    return user.is_staff or user.is_superuser or user.groups.filter(name='admin').exists()
+
+@login_required
+@user_passes_test(is_admin)
+def user_list(request):
+    """View to list all users - accessible only to admin users"""
+    from django.contrib.auth.models import User
+    users = User.objects.all().order_by('-date_joined')
+    return render(request, 'core/user_list.html', {'users': users})
+
+@login_required
+@user_passes_test(is_admin)
+def user_create(request):
+    """View to create a new user - accessible only to admin users"""
+    if request.method == 'POST':
+        form = UserCreateForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            messages.success(request, f'Usuario "{user.username}" creado exitosamente.')
+            return redirect('user_list')
+        else:
+            # Log form errors for debugging
+            print(f"Form is invalid. Errors: {form.errors}")
+            messages.error(request, 'Error al crear usuario. Por favor corrija los errores indicados.')
+    else:
+        form = UserCreateForm()
+
+    return render(request, 'core/user_create.html', {'form': form})
