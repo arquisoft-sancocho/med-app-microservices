@@ -13,6 +13,12 @@ def diagnostico_list(request):
 
 @login_required
 def diagnostico_create(request):
+    
+    # Verificar permisos: solo Admin o Médico de Junta pueden añadir un diagnostico
+    if not (request.user.is_superuser or request.user.groups.filter(name__in=["Administrador", "Medico Junta Medica"]).exists()):
+        messages.error(request, "No tienes permisos para añadir un diagnóstico.")
+        return redirect('diagnosticoList')
+    
     if request.method == 'POST':
         form = DiagnosticoForm(request.POST)
         if form.is_valid():
@@ -100,7 +106,7 @@ def diagnostico_edit(request, diagnostico_id):
     diagnostico = get_object_or_404(Diagnostico2, id=diagnostico_id)
 
     # Verificar permisos dentro de la vista
-    if not (request.user.is_superuser or request.user.groups.filter(name__in=["Administrador", "Médico de Junta"]).exists()):
+    if not (request.user.is_superuser or request.user.groups.filter(name__in=["Administrador", "Medico Junta Medica", ]).exists()):
         messages.error(request, "No tienes permisos para modificar este diagnóstico.")
         return redirect('diagnosticoDetail', diagnostico_id=diagnostico_id)
 
