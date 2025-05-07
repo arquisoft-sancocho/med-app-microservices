@@ -90,20 +90,7 @@ def diagnostico_delete(request, diagnostico_id):
         messages.warning(request, 'Método no permitido para eliminar diagnóstico.')
         return redirect('diagnosticoList')
 
-@login_required
-@permission_required('diagnosticos2.can_make_diagnosis', raise_exception=True)
-def make_diagnosis_view(request, paciente_id):
-    paciente = get_object_or_404(Paciente2, pk=paciente_id)
-    if request.method == 'POST':
-        form = DiagnosticoForm(request.POST)
-        if form.is_valid():
-            diagnostico = form.save(commit=False)
-            diagnostico.paciente = paciente
-            diagnostico.save()
-            return redirect('pacienteDetail2', paciente_id=paciente.id)
-    else:
-        form = DiagnosticoForm()
-    return render(request, 'diagnosticos2/make_diagnosis.html', {'form': form, 'paciente': paciente})
+
 
 @login_required
 def diagnostico_edit(request, diagnostico_id):

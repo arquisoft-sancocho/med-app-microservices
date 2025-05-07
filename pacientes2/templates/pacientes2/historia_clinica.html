@@ -93,71 +93,80 @@
 
                 <h3>Consultas Médicas</h3>
                 {% if consultas %}
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Tipo</th>
-                                    <th>Fecha</th>
-                                    <th>Motivo</th>
-                                    <th>Prescripciones</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for consulta in consultas %}
-                                <tr>
-                                    <td>{{ consulta.get_tipo_consulta_display }}</td>
-                                    <td>{{ consulta.fecha|date:"d/m/Y H:i" }}</td>
-                                    <td>{{ consulta.motivo|truncatechars:30 }}</td>
-                                    <td>{{ consulta.prescripciones.count }}</td>
-                                    <td>
-                                        <a href="{% url 'consultaDetail' consulta.id %}" class="btn btn-info btn-sm">
-                                            <i class="fa fa-eye"></i> Ver
-                                        </a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                    {% if consultas|stringformat:"s" == "No tienes permisos para ver esta información." %}
+                        <div class="alert alert-info">{{ consultas }}</div>
+                    {% else %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Fecha</th>
+                                        <th>Motivo</th>
+                                        <th>Prescripciones</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for consulta in consultas %}
+                                    <tr>
+                                        <td>{{ consulta.get_tipo_consulta_display }}</td>
+                                        <td>{{ consulta.fecha|date:"d/m/Y H:i" }}</td>
+                                        <td>{{ consulta.motivo|truncatechars:30 }}</td>
+                                        <td>{{ consulta.prescripciones.count }}</td>
+                                        <td>
+                                            <a href="{% url 'consultaDetail' consulta.id %}" class="btn btn-info btn-sm">
+                                                <i class="fa fa-eye"></i> Ver
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
                 {% else %}
                     <div class="alert alert-info">No hay consultas médicas registradas.</div>
                 {% endif %}
 
                 <h3>Cirugías</h3>
                 {% if cirugias %}
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Tipo</th>
-                                    <th>Fecha</th>
-                                    <th>Resultado</th>
-                                    <th>Estado Postoperatorio</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for cirugia in cirugias %}
-                                <tr>
-                                    <td>{{ cirugia.get_tipo_display }}</td>
-                                    <td>{{ cirugia.fecha|date:"d/m/Y" }}</td>
-                                    <td>{{ cirugia.resultado|truncatechars:50 }}</td>
-                                    <td>{{ cirugia.get_estado_postoperatorio_display }}</td>
-                                    <td>
-                                        <a href="{% url 'cirugiaDetail' cirugia.id %}" class="btn btn-info btn-sm">
-                                            <i class="fa fa-eye"></i> Ver
-                                        </a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                    {% if cirugias|stringformat:"s" == "No tienes permisos para ver esta información." %}
+                        <div class="alert alert-info">{{ cirugias }}</div>
+                    {% else %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Fecha</th>
+                                        <th>Resultado</th>
+                                        <th>Estado Postoperatorio</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cirugia in cirugias %}
+                                    <tr>
+                                        <td>{{ cirugia.get_tipo_display }}</td>
+                                        <td>{{ cirugia.fecha|date:"d/m/Y" }}</td>
+                                        <td>{{ cirugia.resultado|truncatechars:50 }}</td>
+                                        <td>{{ cirugia.get_estado_postoperatorio_display }}</td>
+                                        <td>
+                                            <a href="{% url 'cirugiaDetail' cirugia.id %}" class="btn btn-info btn-sm">
+                                                <i class="fa fa-eye"></i> Ver
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
                 {% else %}
                     <div class="alert alert-info">No hay cirugías registradas.</div>
                 {% endif %}
+
 
                 <div class="text-center" style="margin-top: 20px;">
                     <a href="{% url 'pacienteList2' %}" class="btn btn-primary">

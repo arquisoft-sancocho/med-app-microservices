@@ -28,7 +28,9 @@
                             <th>Nombre</th>
                             <th>Fecha de realización</th>
                             <th>Paciente</th>
-                            <th>Eliminar</th>
+                            {% if puede_eliminar %}
+                                <th>Eliminar</th>
+                            {% endif %}
                         </tr>
                         </thead>
                         <tbody>
@@ -38,15 +40,17 @@
                             <td><a href="{% url 'consultaDetail' consulta.id %}">{{ consulta.nombre}}</a></td>
                             <td>{{ consulta.fecha}}</td>
                             <td>{{ consulta.paciente.nombre}}</td>
-                            <td>
-                                <form method="POST" action="{% url 'consultaDelete' consulta.id %}" style="display: inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger waves-effect waves-light" 
-                                            onclick="return confirm('¿Estás seguro de que quieres eliminar esta consulta médica y todas sus prescripciones asociados?');">
-                                        -
-                                    </button>
-                                </form>
-                            </td>
+                            {% if puede_eliminar %}
+                                <td>
+                                    <form method="POST" action="{% url 'consultaDelete' consulta.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger waves-effect waves-light" 
+                                                onclick="return confirm('¿Estás seguro de que quieres eliminar esta consulta médica y todas sus prescripciones asociados?');">
+                                            -
+                                        </button>
+                                    </form>
+                                </td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
 

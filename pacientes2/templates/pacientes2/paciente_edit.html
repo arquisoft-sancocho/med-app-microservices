@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Editar Paciente</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Guardar cambios</button>
+    <a href="{% url 'pacienteDetail2' paciente.id %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

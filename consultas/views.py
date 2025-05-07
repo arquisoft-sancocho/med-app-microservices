@@ -11,10 +11,20 @@ from django.urls import reverse_lazy
 @login_required
 def consulta_list(request):
     consultas = get_consultas()
-    return render(request, 'consultas/consultas.html', {'consulta_list': consultas})
+    puede_eliminar = request.user.is_superuser or request.user.groups.filter(name="Administrador").exists()
+    return render(request, 'consultas/consultas.html', {
+        'consulta_list': consultas,
+        'puede_eliminar': puede_eliminar
+        })
 
 @login_required
 def consulta_create(request):
+    
+     # Verificar permisos: cualquiera puede añadir una consulta menos los médicos
+    if not (request.user.is_superuser or request.user.groups.filter(name__in=["Administrador", "Medico Junta Medica", "Medico", "Enfermero"]).exists()):
+        messages.error(request, "No tienes permisos para añadir una consulta.")
+        return redirect('consultaList')
+    
     if request.method == 'POST':
         form = ConsultaMedicaForm(request.POST)
         if form.is_valid():
@@ -42,6 +52,11 @@ def consulta_detail(request, consulta_id):
 
 @login_required
 def add_prescripcion(request, consulta_id):
+    
+    if not (request.user.is_superuser or request.user.groups.filter(name__in=["Administrador", "Medico Junta Medica", "Medico", "Enfermero"]).exists()):
+        messages.error(request, "No tienes permisos para añadir una prescripción.")
+        return redirect('consultaDetail', consulta_id=consulta_id)
+    
     consulta = get_object_or_404(ConsultaMedica, id=consulta_id)
 
     if request.method == 'POST':
@@ -84,3 +99,27 @@ class ConsultaMedicaUpdateView(LoginRequiredMixin, PermissionRequiredMixin, Upda
 
     def get_success_url(self):
         return reverse_lazy('consultaDetail', kwargs={'consulta_id': self.object.pk})
+    
+@login_required
+def consulta_edit(request, consulta_id):
+    consulta = get_object_or_404(ConsultaMedica, id=consulta_id)
+
+    # Verificar permisos dentro de la vista
+    if not (request.user.is_superuser or request.user.groups.filter(name__in=["Administrador", "Medico Junta Medica", "Medico", "Enfermero"]).exists()):
+        messages.error(request, "No tienes permisos para modificar esta consulta.")
+        return redirect('consultaDetail', consulta_id=consulta_id)
+
+    if request.method == 'POST':
+        form = ConsultaMedicaForm(request.POST, instance=consulta)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Consulta actualizada con éxito.')
+            return redirect('consultaDetail', consulta_id=consulta.id)
+    else:
+        form = ConsultaMedicaForm(instance=consulta)
+
+    return render(request, 'consultas/consulta_edit.html', {
+        'form': form,
+        'consulta': consulta
+    })
+

@@ -39,15 +39,23 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/examenes2/">Exámenes</a>
                 </li>
+
                 <li class="nav-item">
                     <a class="nav-link" href="/diagnosticos/">Diagnósticos</a>
                 </li>
+
+                {% if not request.user.groups.filter(name__in=["Tecnico", "Enfermero"]).exists %}
                 <li class="nav-item">
                     <a class="nav-link" href="/cirugias/">Cirugías</a>
                 </li>
+                {% endif %}
+
+                {% if not request.user.groups.filter(name="Tecnico").exists %}
                 <li class="nav-item">
                     <a class="nav-link" href="/consultas/">Consultas Médicas</a>
                 </li>
+                {% endif %}
+                
 
                 {% if user.is_staff or user.is_superuser or user.groups.all.0.name == 'admin' %}
                 <li class="nav-item">

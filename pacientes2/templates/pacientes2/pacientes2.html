@@ -27,7 +27,9 @@
                         <tr style="color:#0E2EB0">
                             <th>Nombre</th>
                             <th>Fecha de Registro</th>
-                            <th>Eliminar</th>
+                            {% if puede_eliminar %}
+                                <th>Eliminar</th>
+                            {% endif %}
                         </tr>
                         </thead>
                         <tbody>
@@ -36,12 +38,14 @@
                         <tr>
                             <td><a href="{% url 'pacienteDetail2' paciente2.id %}">{{ paciente2.nombre }}</a></td>
                             <td>{{ paciente2.fecha_registro }}</td>
-                            <td>
-                                <form method="POST" action="{% url 'pacienteDelete2' paciente2.id %}" style="display: inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger waves-effect waves-light" onclick="return confirm('¿Estás seguro de que quieres eliminar este paciente?');">-</button>
-                                </form>
-                            </td>
+                            {% if puede_eliminar %}
+                                <td>
+                                    <form method="POST" action="{% url 'pacienteDelete2' paciente2.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger waves-effect waves-light" onclick="return confirm('¿Estás seguro de que quieres eliminar este paciente?');">-</button>
+                                    </form>
+                                </td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
 
