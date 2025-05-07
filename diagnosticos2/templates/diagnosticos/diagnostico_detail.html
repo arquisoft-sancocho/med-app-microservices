@@ -24,5 +24,6 @@
 {% endif %}
 
 <a href="{% url 'addTratamiento' diagnostico.id %}" class="btn btn-primary">Añadir Tratamiento</a>
+<a href="{% url 'diagnosticoEdit' diagnostico.id %}" class="btn btn-warning">Editar Diagnóstico</a>
 <a href="{% url 'diagnosticoList' %}" class="btn btn-secondary">Volver a la lista</a>
 {% endblock %}

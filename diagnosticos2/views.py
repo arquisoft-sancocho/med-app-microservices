@@ -42,15 +42,20 @@ def diagnostico_detail(request, diagnostico_id):
 def add_tratamiento(request, diagnostico_id):
     diagnostico = get_object_or_404(Diagnostico2, id=diagnostico_id)
 
+    # Verificar permisos: solo Admin o Médico de Junta pueden añadir tratamiento
+    if not (request.user.is_superuser or request.user.groups.filter(name__in=["Administrador", "Médico de Junta"]).exists()):
+        messages.error(request, "No tienes permisos para añadir un tratamiento.")
+        return redirect('diagnosticoDetail', diagnostico_id=diagnostico_id)
+
     if request.method == 'POST':
         form = TratamientoForm(request.POST)
         if form.is_valid():
             tratamiento = form.save(commit=False)
             tratamiento.diagnostico = diagnostico
             if hasattr(diagnostico, 'paciente'):
-                 tratamiento.paciente = diagnostico.paciente
+                tratamiento.paciente = diagnostico.paciente
             tratamiento.save()
-            messages.success(request, 'Tratamiento añadido con éxito')
+            messages.success(request, 'Tratamiento añadido con éxito.')
             return redirect('diagnosticoDetail', diagnostico_id=diagnostico.id)
     else:
         form = TratamientoForm()
@@ -59,6 +64,7 @@ def add_tratamiento(request, diagnostico_id):
         'form': form,
         'diagnostico': diagnostico
     })
+
 
 @login_required
 @permission_required('diagnosticos2.delete_diagnostico2', raise_exception=True)
@@ -88,3 +94,27 @@ def make_diagnosis_view(request, paciente_id):
     else:
         form = DiagnosticoForm()
     return render(request, 'diagnosticos2/make_diagnosis.html', {'form': form, 'paciente': paciente})
+
+@login_required
+def diagnostico_edit(request, diagnostico_id):
+    diagnostico = get_object_or_404(Diagnostico2, id=diagnostico_id)
+
+    # Verificar permisos dentro de la vista
+    if not (request.user.is_superuser or request.user.groups.filter(name__in=["Administrador", "Médico de Junta"]).exists()):
+        messages.error(request, "No tienes permisos para modificar este diagnóstico.")
+        return redirect('diagnosticoDetail', diagnostico_id=diagnostico_id)
+
+    if request.method == 'POST':
+        form = DiagnosticoForm(request.POST, instance=diagnostico)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Diagnóstico actualizado con éxito.')
+            return redirect('diagnosticoDetail', diagnostico_id=diagnostico.id)
+    else:
+        form = DiagnosticoForm(instance=diagnostico)
+
+    return render(request, 'diagnosticos/diagnostico_edit.html', {
+        'form': form,
+        'diagnostico': diagnostico
+    })
+
