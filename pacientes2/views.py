@@ -61,7 +61,7 @@ def historia_clinica_view(request, paciente_id):
     return render(request, 'pacientes2/historia_clinica.html', historia)
 
 @login_required
-@permission_required('pacientes2.delete_paciente2', raise_exception=True)
+#@permission_required('pacientes2.delete_paciente2', raise_exception=True)
 def paciente_delete2(request, paciente_id):
     if request.method == 'POST':
         success = delete_paciente2(paciente_id)

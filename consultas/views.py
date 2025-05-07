@@ -77,7 +77,7 @@ def add_prescripcion(request, consulta_id):
     })
 
 @login_required
-@permission_required('consultas.delete_consultamedica', raise_exception=True)
+#@permission_required('consultas.delete_consultamedica', raise_exception=True)
 def consulta_delete(request, consulta_id):
     if request.method == 'POST':
         success = delete_consulta(consulta_id)

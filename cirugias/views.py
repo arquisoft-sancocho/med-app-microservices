@@ -45,7 +45,6 @@ def cirugia_detail(request, cirugia_id):
     return render(request, 'cirugias/cirugia_detail.html', {'cirugia': cirugia})
 
 @login_required
-@permission_required('cirugias.delete_cirugia', raise_exception=True)
 def cirugia_delete(request, cirugia_id):
     if request.method == 'POST':
         success = delete_cirugia(cirugia_id)
