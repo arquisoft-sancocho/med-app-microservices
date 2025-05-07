@@ -44,25 +44,27 @@
                     <a class="nav-link" href="/diagnosticos/">Diagnósticos</a>
                 </li>
 
-                {% if not request.user.groups.filter(name__in=["Tecnico", "Enfermero"]).exists %}
-                <li class="nav-item">
-                    <a class="nav-link" href="/cirugias/">Cirugías</a>
-                </li>
-                {% endif %}
-
-                {% if not request.user.groups.filter(name="Tecnico").exists %}
-                <li class="nav-item">
-                    <a class="nav-link" href="/consultas/">Consultas Médicas</a>
-                </li>
+                {% if tiene_permiso_extra %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cirugias/">Cirugías</a>
+                    </li>
                 {% endif %}
                 
 
+                {% if tiene_permiso_unico %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/consultas/">Consultas Médicas</a>
+                    </li>
+                {% endif %}
+                
+                
+
                 {% if user.is_staff or user.is_superuser or user.groups.all.0.name == 'admin' %}
-                <li class="nav-item">
-                    <a class="nav-link text-primary" href="{% url 'user_list' %}">
-                        <i class="fas fa-users-cog"></i> Administrar Usuarios
-                    </a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="{% url 'user_list' %}">
+                            <i class="fas fa-users-cog"></i> Administrar Usuarios
+                        </a>
+                    </li>
                 {% endif %}
 
             </ul>
