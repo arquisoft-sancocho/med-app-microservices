@@ -69,7 +69,7 @@ def examen_edit2(request, examen_id):
     else:
         form = Examen2Form(instance=examen)
 
-    return render(request, 'examenes2/examen_edit2.html', {
+    return render(request, 'examenes2/examen_edit.html', {
         'form': form,
         'examen': examen
     })
