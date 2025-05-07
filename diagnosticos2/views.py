@@ -9,7 +9,11 @@ from pacientes2.models import Paciente2
 @login_required
 def diagnostico_list(request):
     diagnosticos = get_diagnosticos()
-    return render(request, 'diagnosticos/diagnosticos.html', {'diagnostico_list': diagnosticos})
+    puede_eliminar = request.user.is_superuser or request.user.groups.filter(name="Administrador").exists()
+    return render(request, 'diagnosticos/diagnosticos.html', {
+        'diagnostico_list': diagnosticos,
+        'puede_eliminar': puede_eliminar
+    })
 
 @login_required
 def diagnostico_create(request):

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+
 {% block content %}
 
 <div class="content">
@@ -24,36 +25,37 @@
 
                     <table class="table table-hover">
                         <thead>
-                            <tr style="color:#0E2EB0">
-                                <th>Nombre</th>
-                                <th>Fecha de realización</th>
-                                <th>Paciente</th>
-                                {% if request.user.is_superuser or request.user.groups.filter(name="Administrador").exists %}
-                                    <th>Eliminar</th>
-                                {% endif %}
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for diagnostico in diagnostico_list %}
-                            <tr>
-                                <td><a href="{% url 'diagnosticoDetail' diagnostico.id %}">{{ diagnostico.nombre}}</a></td>
-                                <td>{{ diagnostico.fecha_realizacion }}</td>
-                                <td>{{ diagnostico.paciente.nombre }}</td>
-                                {% if request.user.is_superuser or request.user.groups.filter(name="Administrador").exists %}
-                                    <td>
-                                        <form method="POST" action="{% url 'diagnosticoDelete' diagnostico.id %}" style="display: inline;">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-danger waves-effect waves-light"
-                                                    onclick="return confirm('¿Estás seguro de que quieres eliminar este diagnóstico y todos sus tratamientos asociados?');">
-                                                -
-                                            </button>
-                                        </form>
-                                    </td>
-                                {% endif %}
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                            
+                        <tr style="color:#0E2EB0">
+                            <th>Nombre</th>
+                            <th>Fecha de realización</th>
+                            <th>Paciente</th>
+                            {% if puede_eliminar %}
+                                <th>Eliminar</th>
+                            {% endif %}
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {% for diagnostico in diagnostico_list %}
+                        <tr>
+                            <td><a href="{% url 'diagnosticoDetail' diagnostico.id %}">{{ diagnostico.nombre }}</a></td>
+                            <td>{{ diagnostico.fecha_realizacion }}</td>
+                            <td>{{ diagnostico.paciente.nombre }}</td>
+                            {% if puede_eliminar %}
+                                <td>
+                                    <form method="POST" action="{% url 'diagnosticoDelete' diagnostico.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger waves-effect waves-light"
+                                                onclick="return confirm('¿Estás seguro de que quieres eliminar este diagnóstico y todos sus tratamientos asociados?');">
+                                            -
+                                        </button>
+                                    </form>
+                                </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+
+                        </tbody>
                     </table>
 
                     <div style="text-align:center;">
