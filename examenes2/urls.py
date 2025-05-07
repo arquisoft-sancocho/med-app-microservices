@@ -8,5 +8,5 @@ urlpatterns = [
     path('examenes2/examenCreate2/', csrf_exempt(views.examen_create2), name='examenCreate2'),
     path('examen2/<int:examen_id>/', views.examen_detail2, name='examenDetail2'),
     path('examen2/<int:examen_id>/delete/', views.examen_delete2, name='examenDelete2'),
-    path('examen2/<int:examen2_id>/edit/', views.examen_edit2, name='examenEdit2'),
+    path('examen2/<int:examen_id>/edit/', views.examen_edit2, name='examenEdit2'),
 ]

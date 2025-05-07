@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 @login_required
 def paciente_list2(request):
     pacientes2 = get_pacientes2()
-    puede_eliminar = request.user.is_superuser or request.user.groups.filter(name="Administrador").exists()
+    puede_eliminar = request.user.is_superuser or request.user.groups.filter(name="admin").exists()
     return render(request, 'pacientes2/pacientes2.html', {
         'paciente_list2': pacientes2,
         'puede_eliminar': puede_eliminar
@@ -109,7 +109,7 @@ def paciente_edit2(request, paciente_id):
     else:
         form = Paciente2Form(instance=paciente)
 
-    return render(request, 'pacientes2/paciente_edit2.html', {
+    return render(request, 'pacientes2/paciente_edit.html', {
         'form': form,
         'paciente': paciente
     })

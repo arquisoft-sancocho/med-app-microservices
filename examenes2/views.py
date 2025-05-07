@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 @login_required
 def examen_list2(request):
     examenes = get_examenes2()
-    puede_eliminar = request.user.is_superuser or request.user.groups.filter(name="Administrador").exists()
+    puede_eliminar = request.user.is_superuser or request.user.groups.filter(name="admin").exists()
     return render(request, 'examenes2/examenes2.html', {
         'examen_list2': examenes,
         'puede_eliminar': puede_eliminar

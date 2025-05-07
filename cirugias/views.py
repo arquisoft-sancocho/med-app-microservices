@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 @login_required
 def cirugia_list(request):
     cirugias = get_cirugias()
-    puede_eliminar = request.user.is_superuser or request.user.groups.filter(name="Administrador").exists()
+    puede_eliminar = request.user.is_superuser or request.user.groups.filter(name="admin").exists()
     return render(request, 'cirugias/cirugias.html', {
         'cirugia_list': cirugias,
         'puede_eliminar': puede_eliminar                                         

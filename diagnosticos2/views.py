@@ -9,7 +9,7 @@ from pacientes2.models import Paciente2
 @login_required
 def diagnostico_list(request):
     diagnosticos = get_diagnosticos()
-    puede_eliminar = request.user.is_superuser or request.user.groups.filter(name="Administrador").exists()
+    puede_eliminar = request.user.is_superuser or request.user.groups.filter(name="admin").exists()
     return render(request, 'diagnosticos/diagnosticos.html', {
         'diagnostico_list': diagnosticos,
         'puede_eliminar': puede_eliminar
@@ -19,7 +19,7 @@ def diagnostico_list(request):
 def diagnostico_create(request):
     
     # Verificar permisos: solo Admin o Médico de Junta pueden añadir un diagnostico
-    if not (request.user.is_superuser or request.user.groups.filter(name__in=["Administrador", "Medico Junta Medica"]).exists()):
+    if not (request.user.is_superuser or request.user.groups.filter(name__in=["admin", "Medico Junta Medica"]).exists()):
         messages.error(request, "No tienes permisos para añadir un diagnóstico.")
         return redirect('diagnosticoList')
     
@@ -53,7 +53,7 @@ def add_tratamiento(request, diagnostico_id):
     diagnostico = get_object_or_404(Diagnostico2, id=diagnostico_id)
 
     # Verificar permisos: solo Admin o Médico de Junta pueden añadir tratamiento
-    if not (request.user.is_superuser or request.user.groups.filter(name__in=["Administrador", "Medico Junta Medica"]).exists()):
+    if not (request.user.is_superuser or request.user.groups.filter(name__in=["admin", "Medico Junta Medica"]).exists()):
         messages.error(request, "No tienes permisos para añadir un tratamiento.")
         return redirect('diagnosticoDetail', diagnostico_id=diagnostico_id)
 
@@ -97,7 +97,7 @@ def diagnostico_edit(request, diagnostico_id):
     diagnostico = get_object_or_404(Diagnostico2, id=diagnostico_id)
 
     # Verificar permisos dentro de la vista
-    if not (request.user.is_superuser or request.user.groups.filter(name__in=["Administrador", "Medico Junta Medica", ]).exists()):
+    if not (request.user.is_superuser or request.user.groups.filter(name__in=["admin", "Medico Junta Medica", ]).exists()):
         messages.error(request, "No tienes permisos para modificar este diagnóstico.")
         return redirect('diagnosticoDetail', diagnostico_id=diagnostico_id)
 
