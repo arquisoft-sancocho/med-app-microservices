@@ -77,7 +77,7 @@ def add_tratamiento(request, diagnostico_id):
 
 
 @login_required
-#@permission_required('diagnosticos2.delete_diagnostico2', raise_exception=True)
+@permission_required('diagnosticos2.delete_diagnostico2', raise_exception=True)
 def diagnostico_delete(request, diagnostico_id):
     if request.method == 'POST':
         success = delete_diagnostico(diagnostico_id)
@@ -93,6 +93,7 @@ def diagnostico_delete(request, diagnostico_id):
 
 
 @login_required
+@permission_required('diagnosticos2.change_diagnostico2', raise_exception=True)
 def diagnostico_edit(request, diagnostico_id):
     diagnostico = get_object_or_404(Diagnostico2, id=diagnostico_id)
 

@@ -7,6 +7,7 @@ from .logic.cirugia_logic import get_cirugia_by_id, get_cirugias, create_cirugia
 from django.contrib.auth.decorators import login_required, permission_required
 
 @login_required
+@permission_required('cirugias.view_cirugia', raise_exception=True)
 def cirugia_list(request):
     cirugias = get_cirugias()
     puede_eliminar = request.user.is_superuser or request.user.groups.filter(name="admin").exists()
@@ -17,7 +18,7 @@ def cirugia_list(request):
 
 
 @login_required
-# @permission_required('cirugias.add_cirugia', raise_exception=True)
+@permission_required('cirugias.add_cirugia', raise_exception=True)
 def cirugia_create(request):
     
     if ( request.user.groups.filter(name__in=["Tecnico", "Enfermero"]).exists()):
@@ -36,6 +37,7 @@ def cirugia_create(request):
     return render(request, 'cirugias/cirugiaCreate.html', {'form': form})
 
 @login_required
+@permission_required('cirugias.view_cirugia', raise_exception=True)
 def cirugia_detail(request, cirugia_id):
     cirugia = get_cirugia_by_id(cirugia_id)
     if not cirugia:
@@ -45,6 +47,7 @@ def cirugia_detail(request, cirugia_id):
     return render(request, 'cirugias/cirugia_detail.html', {'cirugia': cirugia})
 
 @login_required
+@permission_required('cirugias.delete_cirugia', raise_exception=True)
 def cirugia_delete(request, cirugia_id):
     if request.method == 'POST':
         success = delete_cirugia(cirugia_id)
@@ -59,6 +62,7 @@ def cirugia_delete(request, cirugia_id):
     
     
 @login_required
+@permission_required('cirugias.change_cirugia', raise_exception=True)
 def cirugia_edit(request, cirugia_id):
     cirugia = get_object_or_404(Cirugia, id=cirugia_id)
 
