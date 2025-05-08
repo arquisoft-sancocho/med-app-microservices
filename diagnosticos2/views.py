@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from pacientes2.models import Paciente2
 
 @login_required
+@permission_required('diagnosticos2.view_diagnostico2', raise_exception=True)
 def diagnostico_list(request):
     diagnosticos = get_diagnosticos()
     puede_eliminar = request.user.is_superuser or request.user.groups.filter(name="admin").exists()
@@ -17,7 +18,6 @@ def diagnostico_list(request):
 
 @login_required
 def diagnostico_create(request):
-    
     # Verificar permisos: solo Admin o Médico de Junta pueden añadir un diagnostico
     if not (request.user.is_superuser or request.user.groups.filter(name__in=["admin", "Medico Junta Medica"]).exists()):
         messages.error(request, "No tienes permisos para añadir un diagnóstico.")
@@ -35,6 +35,7 @@ def diagnostico_create(request):
     return render(request, 'diagnosticos/diagnosticoCreate.html', {'form': form})
 
 @login_required
+@permission_required('diagnosticos2.view_diagnostico2', raise_exception=True)
 def diagnostico_detail(request, diagnostico_id):
     diagnostico = get_diagnostico_by_id(diagnostico_id)
     if not diagnostico:
@@ -93,7 +94,7 @@ def diagnostico_delete(request, diagnostico_id):
 
 
 @login_required
-@permission_required('diagnosticos2.change_diagnostico2', raise_exception=True)
+#@permission_required('diagnosticos2.change_diagnostico2', raise_exception=True)
 def diagnostico_edit(request, diagnostico_id):
     diagnostico = get_object_or_404(Diagnostico2, id=diagnostico_id)
 

@@ -7,6 +7,7 @@ from .logic.examen2_logic import get_examenes2, create_examen2, get_examen_by_id
 from django.contrib.auth.decorators import login_required, permission_required
 
 @login_required
+@permission_required('examenes2.view_examen2', raise_exception=True)
 def examen_list2(request):
     examenes = get_examenes2()
     puede_eliminar = request.user.is_superuser or request.user.groups.filter(name="admin").exists()
@@ -17,7 +18,6 @@ def examen_list2(request):
 
     
 @login_required
-#@permission_required('examenes2.add_examen2', raise_exception=True) # Add if needed
 def examen_create2(request):
     
     if request.method == 'POST':
@@ -32,6 +32,7 @@ def examen_create2(request):
     return render(request, 'examenes2/examenCreate2.html', {'form': form})
 
 @login_required
+@permission_required('examenes2.view_examen2', raise_exception=True)
 def examen_detail2(request, examen_id):
     examen2 = get_examen_by_id2(examen_id)
     if not examen2:
@@ -41,7 +42,7 @@ def examen_detail2(request, examen_id):
     return render(request, 'examenes2/examen_detail2.html', {'examen2': examen2})
 
 @login_required
-#@permission_required('examenes2.delete_examen2', raise_exception=True)
+@permission_required('examenes2.delete_examen2', raise_exception=True)
 def examen_delete2(request, examen_id):
     # Ensure only POST requests are allowed for deletion
     if request.method == 'POST':

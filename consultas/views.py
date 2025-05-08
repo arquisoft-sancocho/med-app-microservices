@@ -9,6 +9,7 @@ from django.views.generic import UpdateView, DetailView
 from django.urls import reverse_lazy
 
 @login_required
+@permission_required('consultas.view_consultamedica', raise_exception=True)
 def consulta_list(request):
     consultas = get_consultas()
     puede_eliminar = request.user.is_superuser or request.user.groups.filter(name="admin").exists()
@@ -18,8 +19,8 @@ def consulta_list(request):
         })
 
 @login_required
+@permission_required('consultas.add_consultamedica', raise_exception=True)
 def consulta_create(request):
-    
      # Verificar permisos: cualquiera puede añadir una consulta menos los médicos
     if not (request.user.is_superuser or request.user.groups.filter(name__in=["admin", "Medico Junta Medica", "Medico", "Enfermero"]).exists()):
         messages.error(request, "No tienes permisos para añadir una consulta.")
@@ -37,6 +38,7 @@ def consulta_create(request):
     return render(request, 'consultas/consultaCreate.html', {'form': form})
 
 @login_required
+@permission_required('consultas.view_consultamedica', raise_exception=True)
 def consulta_detail(request, consulta_id):
     consulta = get_consulta_by_id(consulta_id)
     if not consulta:
@@ -51,6 +53,7 @@ def consulta_detail(request, consulta_id):
     })
 
 @login_required
+@permission_required('consultas.change_consultamedica', raise_exception=True)
 def add_prescripcion(request, consulta_id):
     
     if not (request.user.is_superuser or request.user.groups.filter(name__in=["admin", "Medico Junta Medica", "Medico", "Enfermero"]).exists()):
@@ -77,7 +80,7 @@ def add_prescripcion(request, consulta_id):
     })
 
 @login_required
-#@permission_required('consultas.delete_consultamedica', raise_exception=True)
+@permission_required('consultas.delete_consultamedica', raise_exception=True)
 def consulta_delete(request, consulta_id):
     if request.method == 'POST':
         success = delete_consulta(consulta_id)
@@ -101,6 +104,7 @@ class ConsultaMedicaUpdateView(LoginRequiredMixin, PermissionRequiredMixin, Upda
         return reverse_lazy('consultaDetail', kwargs={'consulta_id': self.object.pk})
     
 @login_required
+@permission_required('consultas.change_consultamedica', raise_exception=True)
 def consulta_edit(request, consulta_id):
     consulta = get_object_or_404(ConsultaMedica, id=consulta_id)
 
