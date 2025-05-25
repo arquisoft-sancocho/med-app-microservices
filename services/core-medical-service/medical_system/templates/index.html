@@ -2,9 +2,104 @@
 {% load static %}
  
 {% block content %}
+<style>
+/* Inline fallback styles to ensure they always load */
+.medical-container {
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    flex-direction: column; 
+    min-height: 300px;
+    padding: 20px;
+}
 
-    <div style=" display: flex; align-items: center; justify-content: center;" class="login-box auth0-box before">
-            <img style="width:80%; " src="{% static 'media/medical.png' %}" />
+.medical-logo {
+    width: 80%; 
+    max-width: 400px;
+    transition: opacity 0.3s ease;
+}
+
+.logo-fallback {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+.logo-fallback.active {
+    display: block;
+}
+
+.fallback-content {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.fallback-icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+}
+
+.fallback-title {
+    margin: 10px 0;
+    font-size: 2em;
+    font-weight: 300;
+}
+
+.fallback-subtitle {
+    margin: 0;
+    opacity: 0.8;
+    font-size: 1.1em;
+}
+</style>
+
+<div class="medical-container login-box auth0-box before">
+    <!-- Try to load the image first -->
+    <img id="medical-logo" 
+         class="medical-logo" 
+         src="{% static 'media/medical.png' %}" 
+         alt="Medical System Logo"
+         onload="console.log('Logo loaded successfully')"
+         onerror="showFallback()" />
+    
+    <!-- Fallback content -->
+    <div id="logo-fallback" class="logo-fallback">
+        <div class="fallback-content">
+            <div class="fallback-icon">🏥</div>
+            <h2 class="fallback-title">Medical System</h2>
+            <p class="fallback-subtitle">Healthcare Management Platform</p>
+        </div>
     </div>
+</div>
+
+<script>
+function showFallback() {
+    console.log('Image failed to load, showing fallback');
+    document.getElementById('medical-logo').style.display = 'none';
+    document.getElementById('logo-fallback').classList.add('active');
+}
+
+// Also show fallback if image takes too long to load
+setTimeout(function() {
+    var img = document.getElementById('medical-logo');
+    if (img && !img.complete) {
+        console.log('Image taking too long to load, showing fallback');
+        showFallback();
+    }
+}, 3000); // 3 second timeout
+
+// Check if static files are available at all
+window.addEventListener('load', function() {
+    var img = document.getElementById('medical-logo');
+    if (img && (img.naturalWidth === 0 || !img.src || img.src.includes('undefined'))) {
+        console.log('Static files not available, showing fallback');
+        showFallback();
+    }
+});
+</script>
 
 {% endblock %}

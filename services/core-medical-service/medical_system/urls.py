@@ -28,7 +28,15 @@ urlpatterns = [
     path('', include('pacientes2.urls')),
     path('consultas/', include('consultas.urls')),
     path('health/', include('core.urls')), # Health checks
-
+    
+    # Microservice redirects for seamless navigation
+    path('examenes/', views.examenes_redirect, name='examenes_redirect'),
+    path('examenes/<path:path>', views.examenes_redirect, name='examenes_redirect_path'),
+    path('diagnosticos/', views.diagnosticos_redirect, name='diagnosticos_redirect'),
+    path('diagnosticos/<path:path>', views.diagnosticos_redirect, name='diagnosticos_redirect_path'),
+    path('cirugias/', views.cirugias_redirect, name='cirugias_redirect'),
+    path('cirugias/<path:path>', views.cirugias_redirect, name='cirugias_redirect_path'),
+    
     # API endpoints for microservice communication
     path('', include('pacientes2.api_urls')),
 
