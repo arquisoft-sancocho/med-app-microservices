@@ -19,10 +19,10 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    
+
     # Health check endpoints
     path('health/', include('core.urls')),
-    
+
     # API endpoints
     path('', include('examenes2.api_urls')),
     path('', include('examenes2.urls')),  # Original templates if needed
