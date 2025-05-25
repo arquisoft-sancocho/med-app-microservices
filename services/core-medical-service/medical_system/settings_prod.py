@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'corsheaders',
     'pacientes2',
     'examenes2',
     'diagnosticos2',
@@ -48,6 +50,7 @@ INSTALLED_APPS = [
 
 # Middleware settings
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -106,18 +109,15 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# WhiteNoise configuration
+# Storage configuration - Django 4.2+ style
 STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
-
-# Media files settings
-#MEDIA_URL = '/media/'
-#MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-
 
 # Configuración de Google Cloud Storage
 GOOGLE_APPLICATION_CREDENTIALS = access_secret_version("gcs-credentials-json")
@@ -128,10 +128,8 @@ if GOOGLE_APPLICATION_CREDENTIALS:
 # Nombre del bucket de Google Cloud Storage
 GS_BUCKET_NAME = "arquisoft-453601_imagenes"
 
-# Configuración de almacenamiento de archivos en GCS
-DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+# Google Cloud Storage settings
 GS_DEFAULT_ACL = None  # Evita que los archivos sean públicos por defecto
-
 MEDIA_URL = f"https://storage.googleapis.com/{GS_BUCKET_NAME}/"
 
 # Tipos de archivos permitidos
@@ -179,14 +177,14 @@ LOGGING = {
 
 # Microservice URLs - Dynamic configuration for production
 EXAMS_SERVICE_URL = os.getenv('EXAMS_SERVICE_URL', 'http://localhost:8001')
-DIAGNOSIS_SERVICE_URL = os.getenv('DIAGNOSIS_SERVICE_URL', 'http://localhost:8002')  
+DIAGNOSIS_SERVICE_URL = os.getenv('DIAGNOSIS_SERVICE_URL', 'http://localhost:8002')
 SURGERY_SERVICE_URL = os.getenv('SURGERY_SERVICE_URL', 'http://localhost:8003')
 
 # REST Framework configuration
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'core.authentication.JWTAuthentication',  # JWT for microservices
         'rest_framework.authentication.SessionAuthentication',  # Session for web UI
+        'rest_framework.authentication.BasicAuthentication',    # Basic auth for simplicity
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -198,7 +196,7 @@ REST_FRAMEWORK = {
 # CORS settings for microservice communication
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
-    "http://localhost:8001", 
+    "http://localhost:8001",
     "http://localhost:8002",
     "http://localhost:8003",
     "https://core-medical-service-*.run.app",
@@ -218,7 +216,7 @@ CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'False').lower() ==
 # Update CSRF trusted origins for production
 CSRF_TRUSTED_ORIGINS = [
     "https://core-medical-service-75l2ychmxa-uc.a.run.app",
-    "https://core-medical-service-43021834801.us-central1.run.app", 
+    "https://core-medical-service-43021834801.us-central1.run.app",
     "https://*.run.app",  # Allow all Cloud Run URLs
     "https://*.googleusercontent.com",  # Load balancer URLs
     "http://34.36.102.101",  # Load balancer HTTP

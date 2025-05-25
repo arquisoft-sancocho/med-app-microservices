@@ -17,13 +17,13 @@ def paciente_list2(request):
         'puede_eliminar': puede_eliminar
         })
 
-    
+
 @login_required
 def paciente_create2(request):
     if  ( request.user.groups.filter(name__in=["Tecnico"]).exists()):
         messages.error(request, "No tienes permisos para añadir un paciente.")
         return redirect('pacienteList2')
-    
+
     if request.method == 'POST':
         form = Paciente2Form(request.POST)
         if form.is_valid():
@@ -52,11 +52,11 @@ def historia_clinica_view(request, paciente_id):
 
     if not historia:
         return HttpResponse("Paciente no encontrado", status=404)
-    
+
     if  ( request.user.groups.filter(name__in=["Tecnico" ]).exists()):
         historia["cirugias"] = "No tienes permisos para ver esta información."
         historia["consultas"] = "No tienes permisos para ver esta información."
-        
+
     if  (request.user.groups.filter(name__in=["Enfermero" ]).exists()):
         historia["cirugias"] = "No tienes permisos para ver esta información."
 
@@ -80,14 +80,14 @@ def paciente_delete2(request, paciente_id):
 @permission_required('pacientes2.view_paciente2', raise_exception=True)
 def informacion_critica(request, paciente_id):
     informacion = get_informacion_critica(paciente_id, request)
-    
+
     if not informacion:
         return HttpResponse("Paciente no encontrado", status=404)
-    
+
     if  ( request.user.groups.filter(name__in=["Tecnico" ]).exists()):
         informacion["cirugias"] = "No tienes permisos para ver esta información."
         informacion["consultas"] = "No tienes permisos para ver esta información."
-        
+
     if  (request.user.groups.filter(name__in=["Enfermero" ]).exists()):
         informacion["cirugias"] = "No tienes permisos para ver esta información."
 

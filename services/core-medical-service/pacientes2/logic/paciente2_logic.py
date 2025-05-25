@@ -41,10 +41,10 @@ def get_historia_clinica(paciente_id, request=None):
     examenes = microservice_client.get_patient_exams(paciente_id, request)
     diagnosticos = microservice_client.get_patient_diagnoses(paciente_id, request)
     cirugias = microservice_client.get_patient_surgeries(paciente_id, request)
-    
+
     # Get consultations from local database
     consultas = list(ConsultaMedica.objects.filter(paciente_id=paciente_id).values(
-        'id', 'fecha', 'motivo_consulta', 'diagnostico_principal', 
+        'id', 'fecha', 'motivo_consulta', 'diagnostico_principal',
         'plan_tratamiento', 'observaciones'
     ))
 
@@ -68,10 +68,10 @@ def get_informacion_critica(paciente_id, request=None):
     examenes = microservice_client.get_patient_exams(paciente_id, request)
     diagnosticos = microservice_client.get_patient_diagnoses(paciente_id, request)
     cirugias = microservice_client.get_patient_surgeries(paciente_id, request)
-    
+
     # Get consultations from local database
     consultas = list(ConsultaMedica.objects.filter(paciente_id=paciente_id).values(
-        'id', 'fecha', 'motivo_consulta', 'diagnostico_principal', 
+        'id', 'fecha', 'motivo_consulta', 'diagnostico_principal',
         'plan_tratamiento', 'observaciones'
     ))
 

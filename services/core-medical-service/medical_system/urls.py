@@ -29,21 +29,21 @@ urlpatterns = [
     path('', include('pacientes2.urls')),
     path('consultas/', include('consultas.urls')),
     path('health/', include('core.urls')), # Health checks
-    
+
     # Microservice API integration views (replaces redirects)
     path('examenes/', microservice_views.examenes_list, name='examenes_list'),
     path('examenes/patient/<int:patient_id>/', microservice_views.examenes_patient, name='examenes_patient'),
     path('examenes/detail/<int:exam_id>/', microservice_views.examenes_detail, name='examenes_detail'),
-    
+
     path('diagnosticos/', microservice_views.diagnosticos_list, name='diagnosticos_list'),
     path('diagnosticos/patient/<int:patient_id>/', microservice_views.diagnosticos_patient, name='diagnosticos_patient'),
-    
+
     path('cirugias/', microservice_views.cirugias_list, name='cirugias_list'),
     path('cirugias/patient/<int:patient_id>/', microservice_views.cirugias_patient, name='cirugias_patient'),
-    
+
     # Microservice status endpoint
     path('services/status/', microservice_views.services_status, name='services_status'),
-    
+
     # API endpoints for microservice communication
     path('', include('pacientes2.api_urls')),
 
