@@ -139,6 +139,13 @@ jobs:
         run: |
           cd infrastructure
           terraform init -upgrade
+          
+          # Clean up any potential state conflicts
+          echo "Cleaning up potential state conflicts..."
+          terraform state rm google_compute_url_map.main 2>/dev/null || echo "No main URL map in state"
+          terraform state rm google_compute_global_forwarding_rule.http 2>/dev/null || echo "No http forwarding rule in state"
+          terraform state rm google_compute_global_forwarding_rule.https 2>/dev/null || echo "No https forwarding rule in state"
+          
           echo "Attempting to import existing resources..."
           terraform import google_compute_region_network_endpoint_group.core_medical_neg "projects/${{ env.PROJECT_ID }}/regions/${{ env.REGION }}/networkEndpointGroups/core-medical-neg" || echo "Core Medical NEG import: proceeding..."
           terraform import google_compute_region_network_endpoint_group.exams_neg "projects/${{ env.PROJECT_ID }}/regions/${{ env.REGION }}/networkEndpointGroups/exams-neg" || echo "Exams NEG import: proceeding..."
@@ -148,15 +155,13 @@ jobs:
           terraform import google_compute_backend_service.exams_backend "projects/${{ env.PROJECT_ID }}/global/backendServices/exams-backend" || echo "Exams Backend import: proceeding..."
           terraform import google_compute_backend_service.diagnosis_backend "projects/${{ env.PROJECT_ID }}/global/backendServices/diagnosis-backend" || echo "Diagnosis Backend import: proceeding..."
           terraform import google_compute_backend_service.surgery_backend "projects/${{ env.PROJECT_ID }}/global/backendServices/surgery-backend" || echo "Surgery Backend import: proceeding..."
-          terraform import google_compute_url_map.main "projects/${{ env.PROJECT_ID }}/global/urlMaps/medical-load-balancer" || echo "URL Map main import: proceeding..."
+          terraform import google_compute_url_map.api_gateway "projects/${{ env.PROJECT_ID }}/global/urlMaps/medical-api-gateway" || echo "API Gateway URL Map import: proceeding..."
+          terraform import google_compute_url_map.redirect_to_https "projects/${{ env.PROJECT_ID }}/global/urlMaps/redirect-to-https" || echo "URL Map redirect import: proceeding..."
           terraform import google_compute_target_http_proxy.http_proxy "projects/${{ env.PROJECT_ID }}/global/targetHttpProxies/medical-http-proxy" || echo "HTTP Proxy import: proceeding..."
           terraform import google_compute_target_https_proxy.https_proxy "projects/${{ env.PROJECT_ID }}/global/targetHttpsProxies/medical-https-proxy" || echo "HTTPS Proxy import: proceeding..."
-          terraform import google_compute_global_forwarding_rule.http "projects/${{ env.PROJECT_ID }}/global/forwardingRules/medical-http-forwarding-rule" || echo "HTTP Forwarding Rule import: proceeding..."
-          terraform import google_compute_global_forwarding_rule.https "projects/${{ env.PROJECT_ID }}/global/forwardingRules/medical-https-forwarding-rule" || echo "HTTPS Forwarding Rule import: proceeding..."
+          terraform import google_compute_global_forwarding_rule.http_forwarding_rule "projects/${{ env.PROJECT_ID }}/global/forwardingRules/medical-http-forwarding-rule" || echo "HTTP Forwarding Rule import: proceeding..."
+          terraform import google_compute_global_forwarding_rule.https_forwarding_rule "projects/${{ env.PROJECT_ID }}/global/forwardingRules/medical-https-forwarding-rule" || echo "HTTPS Forwarding Rule import: proceeding..."
           terraform import google_compute_managed_ssl_certificate.ssl_cert "projects/${{ env.PROJECT_ID }}/global/sslCertificates/medical-ssl-cert" || echo "SSL Cert import: proceeding..."
-          terraform import google_compute_url_map.redirect_to_https "projects/${{ env.PROJECT_ID }}/global/urlMaps/redirect-to-https" || echo "URL Map redirect import: proceeding..."
-          terraform import google_compute_url_map.api_gateway "projects/${{ env.PROJECT_ID }}/global/urlMaps/medical-api-gateway" || echo "API Gateway URL Map import: proceeding..."
-          terraform import google_compute_global_forwarding_rule.http_forwarding_rule "projects/${{ env.PROJECT_ID }}/global/forwardingRules/medical-http-forwarding-rule" || echo "HTTP Forwarding Rule API import: proceeding..."
           terraform import google_compute_global_address.lb_ip "projects/${{ env.PROJECT_ID }}/global/addresses/medical-lb-ip" || echo "Global Address import: proceeding..."
           echo "Finished attempting to import resources."
           terraform plan
@@ -171,6 +176,6 @@ jobs:
           echo ""
           echo "📋 Service endpoints:"
           echo "   Core Medical: http://$(terraform output -raw load_balancer_ip)/"
-          echo "   Exams: http://$(terraform output -raw load_balancer_ip)/exams/"
-          echo "   Diagnosis: http://$(terraform output -raw load_balancer_ip)/diagnosis/"
-          echo "   Surgery: http://$(terraform output -raw load_balancer_ip)/surgery/"
+          echo "   Exams: http://$(terraform output -raw load_balancer_ip)/api/exams/"
+          echo "   Diagnosis: http://$(terraform output -raw load_balancer_ip)/api/diagnosis/"
+          echo "   Surgery: http://$(terraform output -raw load_balancer_ip)/api/surgeries/"
