@@ -155,6 +155,8 @@ jobs:
           terraform import google_compute_global_forwarding_rule.https "projects/${{ env.PROJECT_ID }}/global/forwardingRules/medical-https-forwarding-rule" || echo "HTTPS Forwarding Rule import: proceeding..."
           terraform import google_compute_managed_ssl_certificate.ssl_cert "projects/${{ env.PROJECT_ID }}/global/sslCertificates/medical-ssl-cert" || echo "SSL Cert import: proceeding..."
           terraform import google_compute_url_map.redirect_to_https "projects/${{ env.PROJECT_ID }}/global/urlMaps/redirect-to-https" || echo "URL Map redirect import: proceeding..."
+          terraform import google_compute_url_map.api_gateway "projects/${{ env.PROJECT_ID }}/global/urlMaps/medical-api-gateway" || echo "API Gateway URL Map import: proceeding..."
+          terraform import google_compute_global_forwarding_rule.http_forwarding_rule "projects/${{ env.PROJECT_ID }}/global/forwardingRules/medical-http-forwarding-rule" || echo "HTTP Forwarding Rule API import: proceeding..."
           terraform import google_compute_global_address.lb_ip "projects/${{ env.PROJECT_ID }}/global/addresses/medical-lb-ip" || echo "Global Address import: proceeding..."
           echo "Finished attempting to import resources."
           terraform plan
