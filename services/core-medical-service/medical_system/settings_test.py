@@ -1,24 +1,25 @@
+# Test settings file to validate configuration without accessing secrets
 from .settings import *
 import os
-import google.auth
-from google.cloud import secretmanager
 
-# Improved secret manager access with better error handling
+# Override secret functions for testing
 def access_secret_version(secret_id, version_id="latest", fallback=None):
-    try:
-        client = secretmanager.SecretManagerServiceClient()
-        name = f"projects/molten-avenue-460900-a0/secrets/{secret_id}/versions/{version_id}"
-        response = client.access_secret_version(request={"name": name})
-        return response.payload.data.decode("UTF-8")
-    except Exception as e:
-        print(f"Error accessing secret {secret_id}: {e}")
-        return fallback
+    # Return dummy values for testing
+    test_secrets = {
+        "django-secret-key": "dummy-secret-key-for-testing",
+        "db-name": "test_db",
+        "db-user": "test_user",
+        "db-password": "test_password",
+        "db-instance": "test-instance",
+        "gcs-credentials-json": None
+    }
+    return test_secrets.get(secret_id, fallback)
 
-# Configuración para producción
-DEBUG = True  # Set to False for production
+# Configuración para testing
+DEBUG = True
 
-# Cargar SECRET_KEY desde Secret Manager
-SECRET_KEY = access_secret_version("django-secret-key", fallback=SECRET_KEY)
+# Use dummy secret key
+SECRET_KEY = "dummy-secret-key-for-testing"
 
 # Permitir hosts de Cloud Run
 ALLOWED_HOSTS = ['*']
@@ -72,7 +73,6 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'medical_system.context_processors.permisos_usuario',
-
             ],
         },
     },
@@ -80,23 +80,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'medical_system.wsgi.application'
 
-# Database settings
+# Database settings - use SQLite for testing
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': access_secret_version("db-name"),
-        'USER': access_secret_version("db-user"),
-        'PASSWORD': access_secret_version("db-password"),
-        'HOST': '127.0.0.1',  # Para Cloud SQL Proxy local
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
     }
 }
-
-# Si estamos en Cloud Run, usar socket para la base de datos
-db_instance = access_secret_version("db-instance")
-if os.environ.get('K_SERVICE') and db_instance:
-    DATABASES['default']['HOST'] = f"/cloudsql/{db_instance}"
-    DATABASES['default']['PORT'] = ''
 
 # Static files settings
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -109,30 +99,16 @@ STATICFILES_DIRS = [
 # Storage configuration - Django 4.2+ style
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 
-# Configuración de Google Cloud Storage
-GOOGLE_APPLICATION_CREDENTIALS = access_secret_version("gcs-credentials-json")
-
-if GOOGLE_APPLICATION_CREDENTIALS:
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
-
-# Nombre del bucket de Google Cloud Storage
-GS_BUCKET_NAME = "arquisoft-453601_imagenes"
-
-# Google Cloud Storage settings
-GS_DEFAULT_ACL = None  # Evita que los archivos sean públicos por defecto
-MEDIA_URL = f"https://storage.googleapis.com/{GS_BUCKET_NAME}/"
-
-# Tipos de archivos permitidos
-ALLOWED_FILE_EXTENSIONS = ['.jpg', '.png', '.jpeg', '.pdf', '.txt', '.dcm']
-
-
+# Media files settings
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Password validation settings
 AUTH_PASSWORD_VALIDATORS = [
@@ -157,21 +133,6 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# Logging settings
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
-    },
-}
-
 # Microservice URLs - Dynamic configuration for production
 EXAMS_SERVICE_URL = os.getenv('EXAMS_SERVICE_URL', 'http://localhost:8001')
 DIAGNOSIS_SERVICE_URL = os.getenv('DIAGNOSIS_SERVICE_URL', 'http://localhost:8002')
@@ -180,8 +141,8 @@ SURGERY_SERVICE_URL = os.getenv('SURGERY_SERVICE_URL', 'http://localhost:8003')
 # REST Framework configuration
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',  # Session for web UI
-        'rest_framework.authentication.BasicAuthentication',    # Basic auth for simplicity
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -196,32 +157,12 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8001",
     "http://localhost:8002",
     "http://localhost:8003",
-    "https://core-medical-service-*.run.app",
-    "https://exams-service-*.run.app",
-    "https://diagnosis-service-*.run.app",
-    "https://surgery-service-*.run.app",
-]
-
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https://.*\.run\.app$",  # Allow all Cloud Run URLs
-    r"^https://.*\.googleusercontent\.com$",  # Load balancer URLs
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'False').lower() == 'true'
+CORS_ALLOW_ALL_ORIGINS = False
 
-# Update CSRF trusted origins for production
-CSRF_TRUSTED_ORIGINS = [
-    "https://core-medical-service-75l2ychmxa-uc.a.run.app",
-    "https://core-medical-service-43021834801.us-central1.run.app",
-    "https://*.run.app",  # Allow all Cloud Run URLs
-    "https://*.googleusercontent.com",  # Load balancer URLs
-    "http://34.36.102.101",  # Load balancer HTTP
-    "https://34.36.102.101",  # Load balancer HTTPS
-    "http://localhost:8000",  # Development
-]
-
-# Security settings for production
-SECURE_CROSS_ORIGIN_OPENER_POLICY = None  # Disable COOP for HTTP compatibility
+# Security settings
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 SECURE_REFERRER_POLICY = "same-origin"
 X_FRAME_OPTIONS = 'DENY'
