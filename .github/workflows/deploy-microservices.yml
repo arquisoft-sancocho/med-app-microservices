@@ -138,7 +138,7 @@ jobs:
           terraform init
           terraform plan -var="project_id=${{ env.PROJECT_ID }}" -var="region=${{ env.REGION }}"
           terraform apply -auto-approve -var="project_id=${{ env.PROJECT_ID }}" -var="region=${{ env.REGION }}"
-          
+
       - name: 'Output Load Balancer Information'
         run: |
           cd infrastructure

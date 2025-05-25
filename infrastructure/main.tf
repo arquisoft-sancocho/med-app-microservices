@@ -88,12 +88,11 @@ resource "google_compute_region_network_endpoint_group" "surgery_neg" {
 
 # Backend services
 resource "google_compute_backend_service" "core_medical_backend" {
-  name                            = "core-medical-backend"
-  description                     = "Backend service for core medical microservice"
-  protocol                        = "HTTP"
-  timeout_sec                     = 30
-  connection_draining_timeout_sec = 30
-  load_balancing_scheme          = "EXTERNAL_MANAGED"
+  name                  = "core-medical-backend"
+  protocol              = "HTTP"
+  port_name             = "http"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  timeout_sec           = 30
 
   backend {
     group = google_compute_region_network_endpoint_group.core_medical_neg.id
@@ -102,17 +101,14 @@ resource "google_compute_backend_service" "core_medical_backend" {
   log_config {
     enable = true
   }
-
-  health_checks = [google_compute_health_check.health_check.id]
 }
 
 resource "google_compute_backend_service" "exams_backend" {
-  name                            = "exams-backend"
-  description                     = "Backend service for exams microservice"
-  protocol                        = "HTTP"
-  timeout_sec                     = 30
-  connection_draining_timeout_sec = 30
-  load_balancing_scheme          = "EXTERNAL_MANAGED"
+  name                  = "exams-backend"
+  protocol              = "HTTP"
+  port_name             = "http"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  timeout_sec           = 30
 
   backend {
     group = google_compute_region_network_endpoint_group.exams_neg.id
@@ -121,17 +117,14 @@ resource "google_compute_backend_service" "exams_backend" {
   log_config {
     enable = true
   }
-
-  health_checks = [google_compute_health_check.health_check.id]
 }
 
 resource "google_compute_backend_service" "diagnosis_backend" {
-  name                            = "diagnosis-backend"
-  description                     = "Backend service for diagnosis microservice"
-  protocol                        = "HTTP"
-  timeout_sec                     = 30
-  connection_draining_timeout_sec = 30
-  load_balancing_scheme          = "EXTERNAL_MANAGED"
+  name                  = "diagnosis-backend"
+  protocol              = "HTTP"
+  port_name             = "http"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  timeout_sec           = 30
 
   backend {
     group = google_compute_region_network_endpoint_group.diagnosis_neg.id
@@ -140,17 +133,14 @@ resource "google_compute_backend_service" "diagnosis_backend" {
   log_config {
     enable = true
   }
-
-  health_checks = [google_compute_health_check.health_check.id]
 }
 
 resource "google_compute_backend_service" "surgery_backend" {
-  name                            = "surgery-backend"
-  description                     = "Backend service for surgery microservice"
-  protocol                        = "HTTP"
-  timeout_sec                     = 30
-  connection_draining_timeout_sec = 30
-  load_balancing_scheme          = "EXTERNAL_MANAGED"
+  name                  = "surgery-backend"
+  protocol              = "HTTP"
+  port_name             = "http"
+  load_balancing_scheme = "EXTERNAL_MANAGED"
+  timeout_sec           = 30
 
   backend {
     group = google_compute_region_network_endpoint_group.surgery_neg.id
@@ -158,21 +148,6 @@ resource "google_compute_backend_service" "surgery_backend" {
 
   log_config {
     enable = true
-  }
-
-  health_checks = [google_compute_health_check.health_check.id]
-}
-
-# Health check
-resource "google_compute_health_check" "health_check" {
-  name = "microservices-health-check"
-
-  timeout_sec        = 5
-  check_interval_sec = 10
-
-  http_health_check {
-    port         = "8080"
-    request_path = "/health/ready"
   }
 }
 
