@@ -145,13 +145,13 @@ jobs:
         run: |
           cd infrastructure
           terraform init -upgrade
-          
+
           # Clean up any potential state conflicts
           echo "Cleaning up potential state conflicts..."
           terraform state rm google_compute_url_map.main 2>/dev/null || echo "No main URL map in state"
           terraform state rm google_compute_global_forwarding_rule.http 2>/dev/null || echo "No http forwarding rule in state"
           terraform state rm google_compute_global_forwarding_rule.https 2>/dev/null || echo "No https forwarding rule in state"
-          
+
           echo "Attempting to import existing resources..."
           terraform import google_compute_region_network_endpoint_group.core_medical_neg "projects/${{ env.PROJECT_ID }}/regions/${{ env.REGION }}/networkEndpointGroups/core-medical-neg" || echo "Core Medical NEG import: proceeding..."
           terraform import google_compute_region_network_endpoint_group.exams_neg "projects/${{ env.PROJECT_ID }}/regions/${{ env.REGION }}/networkEndpointGroups/exams-neg" || echo "Exams NEG import: proceeding..."

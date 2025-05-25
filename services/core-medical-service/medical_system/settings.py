@@ -127,6 +127,15 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'False').lower() == 'true'
 
+# CSRF trusted origins for Cloud Run URLs
+CSRF_TRUSTED_ORIGINS = [
+    "https://core-medical-service-75l2ychmxa-uc.a.run.app",
+    "https://core-medical-service-43021834801.us-central1.run.app",
+    "https://*.run.app",  # Allow all Cloud Run URLs
+    "https://*.googleusercontent.com",  # Load balancer URLs
+    "http://localhost:8000",  # Development
+]
+
 # Microservice URLs - Dynamic configuration
 EXAMS_SERVICE_URL = os.getenv('EXAMS_SERVICE_URL', 'http://localhost:8001')
 DIAGNOSIS_SERVICE_URL = os.getenv('DIAGNOSIS_SERVICE_URL', 'http://localhost:8002')

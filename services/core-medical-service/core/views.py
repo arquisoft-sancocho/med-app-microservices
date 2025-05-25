@@ -1,8 +1,9 @@
 import logging
-from django.http import HttpResponse # JsonResponse no se usa, se puede quitar si quieres
-from django.db import connection, OperationalError
+from django.http import HttpResponse, JsonResponse # JsonResponse agregado para la nueva función
+from django.db import connection, OperationalError, transaction
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import UserCreateForm
 
@@ -76,3 +77,33 @@ def user_create(request):
         form = UserCreateForm()
 
     return render(request, 'core/user_create.html', {'form': form})
+
+# --- NUEVO: Endpoint temporal para crear el usuario de prueba ---
+def create_test_user(request):
+    """
+    Endpoint temporal para crear un usuario de prueba.
+    Solo para propósitos de desarrollo y pruebas.
+    """
+    # Verifica si el usuario ya existe
+    if User.objects.filter(username='testuser').exists():
+        return HttpResponse("El usuario de prueba ya existe.", status=400)
+
+    # Crea el usuario de prueba
+    try:
+        with transaction.atomic():
+            test_user = User.objects.create_user(
+                username='testuser',
+                password='Test1234!',
+                email='testuser@example.com'
+            )
+            test_user.first_name = "Test"
+            test_user.last_name = "User"
+            test_user.is_staff = True  # Otorgar acceso al admin
+            test_user.is_superuser = True  # Otorgar permisos de superusuario
+            test_user.save()
+
+        logger.info("Usuario de prueba creado exitosamente.")
+        return HttpResponse("Usuario de prueba creado exitosamente.", status=201)
+    except Exception as e:
+        logger.error(f"Error al crear el usuario de prueba: {e}")
+        return HttpResponse("Error al crear el usuario de prueba.", status=500)
