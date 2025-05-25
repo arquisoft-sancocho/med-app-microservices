@@ -11,4 +11,4 @@ djangorestframework==3.14.0
 django-cors-headers==4.3.1
 requests==2.31.0
 PyJWT==2.8.0
-google-cloud-sql-connector==1.4.3
+google-cloud-sql-connector==1.4.2
