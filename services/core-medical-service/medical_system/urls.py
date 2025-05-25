@@ -30,16 +30,21 @@ urlpatterns = [
     path('consultas/', include('consultas.urls')),
     path('health/', include('core.urls')), # Health checks
 
-    # Microservice API integration views (replaces redirects)
-    path('examenes/', microservice_views.examenes_list, name='examenes_list'),
-    path('examenes/patient/<int:patient_id>/', microservice_views.examenes_patient, name='examenes_patient'),
-    path('examenes/detail/<int:exam_id>/', microservice_views.examenes_detail, name='examenes_detail'),
+    # Microservice redirect views for navigation from templates
+    path('examenes/', views.examenes_redirect, name='examenes_redirect'),
+    path('diagnosticos/', views.diagnosticos_redirect, name='diagnosticos_redirect'),
+    path('cirugias/', views.cirugias_redirect, name='cirugias_redirect'),
 
-    path('diagnosticos/', microservice_views.diagnosticos_list, name='diagnosticos_list'),
-    path('diagnosticos/patient/<int:patient_id>/', microservice_views.diagnosticos_patient, name='diagnosticos_patient'),
+    # Microservice API integration views (for API calls)
+    path('api/examenes/', microservice_views.examenes_list, name='examenes_list'),
+    path('api/examenes/patient/<int:patient_id>/', microservice_views.examenes_patient, name='examenes_patient'),
+    path('api/examenes/detail/<int:exam_id>/', microservice_views.examenes_detail, name='examenes_detail'),
 
-    path('cirugias/', microservice_views.cirugias_list, name='cirugias_list'),
-    path('cirugias/patient/<int:patient_id>/', microservice_views.cirugias_patient, name='cirugias_patient'),
+    path('api/diagnosticos/', microservice_views.diagnosticos_list, name='diagnosticos_list'),
+    path('api/diagnosticos/patient/<int:patient_id>/', microservice_views.diagnosticos_patient, name='diagnosticos_patient'),
+
+    path('api/cirugias/', microservice_views.cirugias_list, name='cirugias_list'),
+    path('api/cirugias/patient/<int:patient_id>/', microservice_views.cirugias_patient, name='cirugias_patient'),
 
     # Microservice status endpoint
     path('services/status/', microservice_views.services_status, name='services_status'),

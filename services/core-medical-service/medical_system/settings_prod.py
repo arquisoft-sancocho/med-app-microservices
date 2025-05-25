@@ -83,12 +83,12 @@ WSGI_APPLICATION = 'medical_system.wsgi.application'
 # Database settings
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DB_NAME', 'core_medical'),
-        'USER': os.getenv('DB_USER', 'postgres'),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': access_secret_version("db-name", fallback='medical_system'),
+        'USER': access_secret_version("db-user", fallback='postgres'),
+        'PASSWORD': access_secret_version("db-password"),
+        'HOST': '127.0.0.1',  # Para Cloud SQL Proxy local
+        'PORT': '5432',
     }
 }
 
@@ -106,28 +106,25 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# Storage configuration - Django 4.2+ style
+# Storage configuration - Django 4.2+ style (simplified for now)
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 
-# Configuración de Google Cloud Storage
-GOOGLE_APPLICATION_CREDENTIALS = access_secret_version("gcs-credentials-json")
+# Configuración de Google Cloud Storage (disabled until secret is created)
+# GOOGLE_APPLICATION_CREDENTIALS = access_secret_version("gcs-credentials-json")
+# if GOOGLE_APPLICATION_CREDENTIALS:
+#     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
+#     STORAGES["default"]["BACKEND"] = "storages.backends.gcloud.GoogleCloudStorage"
 
-if GOOGLE_APPLICATION_CREDENTIALS:
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
-
-# Nombre del bucket de Google Cloud Storage
-GS_BUCKET_NAME = "arquisoft-453601_imagenes"
-
-# Google Cloud Storage settings
-GS_DEFAULT_ACL = None  # Evita que los archivos sean públicos por defecto
-MEDIA_URL = f"https://storage.googleapis.com/{GS_BUCKET_NAME}/"
+# Media files settings (local for now)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Tipos de archivos permitidos
 ALLOWED_FILE_EXTENSIONS = ['.jpg', '.png', '.jpeg', '.pdf', '.txt', '.dcm']
