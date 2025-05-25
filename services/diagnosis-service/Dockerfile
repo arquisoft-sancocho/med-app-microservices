@@ -1,33 +1,64 @@
-# Use the official Python runtime as a parent image
-FROM python:3.11-slim
+# Multi-stage build for optimized diagnosis service
+FROM python:3.11-slim as builder
 
-# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Set work directory
-WORKDIR /app
-
-# Install system dependencies
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        postgresql-client \
-        build-essential \
+        gcc \
         libpq-dev \
+        build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
+WORKDIR /app
 COPY requirements.txt /app/
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --user -r requirements.txt
 
-# Copy project
-COPY . /app/
+# Production stage
+FROM python:3.11-slim
 
-# Collect static files
-RUN python manage.py collectstatic --noinput
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PORT=8080
+ENV DJANGO_SETTINGS_MODULE=diagnosis_system.settings
 
-# Expose the port the app runs on
-EXPOSE 8000
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libpq5 \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Command to run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "diagnosis_system.wsgi:application"]
+RUN useradd --create-home --shell /bin/bash app
+
+COPY --from=builder /root/.local /home/app/.local
+
+WORKDIR /app
+COPY --chown=app:app . /app/
+
+RUN mkdir -p /app/staticfiles /app/media \
+    && chown -R app:app /app
+
+USER app
+ENV PATH=/home/app/.local/bin:$PATH
+
+RUN python manage.py collectstatic --noinput --clear
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:$PORT/health/ready || exit 1
+
+EXPOSE 8080
+
+CMD exec gunicorn \
+    --bind 0.0.0.0:$PORT \
+    --workers 2 \
+    --worker-class gevent \
+    --worker-connections 1000 \
+    --timeout 30 \
+    --keepalive 5 \
+    --max-requests 1000 \
+    --max-requests-jitter 100 \
+    --preload \
+    --access-logfile - \
+    --error-logfile - \
+    diagnosis_system.wsgi:application

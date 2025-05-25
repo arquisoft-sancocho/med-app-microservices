@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',  # For API endpoints
     'corsheaders',     # For microservice communication
+    'core',            # For authentication
     'examenes2',       # The exams app
 ]
 
@@ -91,7 +92,8 @@ DATABASES = {
 # REST Framework configuration
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        'core.authentication.JWTAuthentication',  # JWT for microservices
+        'rest_framework.authentication.SessionAuthentication',  # Session for web UI
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',

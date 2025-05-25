@@ -97,7 +97,8 @@ DATABASES = {
 # REST Framework configuration
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        'core.authentication.JWTAuthentication',  # JWT for microservices
+        'rest_framework.authentication.SessionAuthentication',  # Session for web UI
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -107,8 +108,24 @@ REST_FRAMEWORK = {
 }
 
 # CORS settings for microservice communication
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:8000').split(',')
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://localhost:8001",
+    "http://localhost:8002",
+    "http://localhost:8003",
+    "https://core-medical-service-*.run.app",
+    "https://exams-service-*.run.app",
+    "https://diagnosis-service-*.run.app",
+    "https://surgery-service-*.run.app",
+]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.run\.app$",  # Allow all Cloud Run URLs
+    r"^https://.*\.googleusercontent\.com$",  # Load balancer URLs
+]
+
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'False').lower() == 'true'
 
 # Microservice URLs - Dynamic configuration
 EXAMS_SERVICE_URL = os.getenv('EXAMS_SERVICE_URL', 'http://localhost:8001')

@@ -1,0 +1,135 @@
+name: Deploy Microservices to GCP
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: molten-avenue-460900-a0
+  REGION: us-central1
+  GAR_LOCATION: us-central1-docker.pkg.dev
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        service:
+          - name: core-medical-service
+            port: 8000
+            path: services/core-medical-service
+            db_instance: core-medical-db
+          - name: exams-service
+            port: 8001
+            path: services/exams-service
+            db_instance: exams-db
+          - name: diagnosis-service
+            port: 8002
+            path: services/diagnosis-service
+            db_instance: diagnosis-db
+          - name: surgery-service
+            port: 8003
+            path: services/surgery-service
+            db_instance: surgery-db
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: 'Configure Docker to use gcloud as a credential helper'
+        run: |
+          gcloud auth configure-docker ${{ env.GAR_LOCATION }}
+
+      - name: 'Build Docker image'
+        run: |
+          cd ${{ matrix.service.path }}
+          docker build -t ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/microservices/${{ matrix.service.name }}:${{ github.sha }} .
+          docker tag ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/microservices/${{ matrix.service.name }}:${{ github.sha }} ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/microservices/${{ matrix.service.name }}:latest
+
+      - name: 'Push Docker image'
+        run: |
+          docker push ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/microservices/${{ matrix.service.name }}:${{ github.sha }}
+          docker push ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/microservices/${{ matrix.service.name }}:latest
+
+      - name: 'Deploy to Cloud Run'
+        run: |
+          gcloud run deploy ${{ matrix.service.name }} \
+            --image=${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/microservices/${{ matrix.service.name }}:latest \
+            --region=${{ env.REGION }} \
+            --platform=managed \
+            --allow-unauthenticated \
+            --port=8080 \
+            --memory=512Mi \
+            --cpu=1 \
+            --min-instances=0 \
+            --max-instances=10 \
+            --add-cloudsql-instances=${{ env.PROJECT_ID }}:${{ env.REGION }}:${{ matrix.service.db_instance }} \
+            --set-env-vars="DEBUG=False" \
+            --set-env-vars="DB_HOST=/cloudsql/${{ env.PROJECT_ID }}:${{ env.REGION }}:${{ matrix.service.db_instance }}" \
+            --set-env-vars="DB_NAME=${{ matrix.service.name == 'core-medical-service' && 'core_medical' || matrix.service.name == 'exams-service' && 'exams_db' || matrix.service.name == 'diagnosis-service' && 'diagnosis_db' || 'surgery_db' }}" \
+            --set-env-vars="DB_USER=postgres" \
+            --set-env-vars="ALLOWED_HOSTS=*" \
+            --set-env-vars="JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" \
+            --set-secrets="DB_PASSWORD=${{ matrix.service.name == 'core-medical-service' && 'core-db-password' || matrix.service.name == 'exams-service' && 'exams-db-password' || matrix.service.name == 'diagnosis-service' && 'diagnosis-db-password' || 'surgery-db-password' }}:latest" \
+            --timeout=300 \
+            --startup-probe="httpGet.path=/health/ready,initialDelaySeconds=10,timeoutSeconds=5,periodSeconds=10,failureThreshold=3" \
+            --liveness-probe="httpGet.path=/health/live,initialDelaySeconds=30,timeoutSeconds=5,periodSeconds=30,failureThreshold=3"
+
+  setup-load-balancer:
+    runs-on: ubuntu-latest
+    needs: build-and-deploy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: 'Deploy Load Balancer Configuration'
+        run: |
+          # Create backend services for each microservice
+          gcloud run services add-iam-policy-binding core-medical-service \
+            --member="allUsers" \
+            --role="roles/run.invoker" \
+            --region=${{ env.REGION }} || true
+
+          gcloud run services add-iam-policy-binding exams-service \
+            --member="allUsers" \
+            --role="roles/run.invoker" \
+            --region=${{ env.REGION }} || true
+
+          gcloud run services add-iam-policy-binding diagnosis-service \
+            --member="allUsers" \
+            --role="roles/run.invoker" \
+            --region=${{ env.REGION }} || true
+
+          gcloud run services add-iam-policy-binding surgery-service \
+            --member="allUsers" \
+            --role="roles/run.invoker" \
+            --region=${{ env.REGION }} || true
+
+      - name: 'Apply Load Balancer Terraform Configuration'
+        run: |
+          cd infrastructure
+          terraform init
+          terraform plan -var="project_id=${{ env.PROJECT_ID }}" -var="region=${{ env.REGION }}"
+          terraform apply -auto-approve -var="project_id=${{ env.PROJECT_ID }}" -var="region=${{ env.REGION }}"

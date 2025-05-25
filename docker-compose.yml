@@ -1,0 +1,179 @@
+version: '3.8'
+
+services:
+  # Core Medical Service
+  core-medical-service:
+    build:
+      context: ./services/core-medical-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8080"
+    environment:
+      - DEBUG=True
+      - DB_NAME=core_medical
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=localhost
+      - DB_PORT=5432
+      - JWT_SECRET_KEY=local-jwt-secret-key
+      - EXAMS_SERVICE_URL=http://exams-service:8080
+      - DIAGNOSIS_SERVICE_URL=http://diagnosis-service:8080
+      - SURGERY_SERVICE_URL=http://surgery-service:8080
+    depends_on:
+      - postgres-core
+    networks:
+      - medical-network
+
+  # Exams Service
+  exams-service:
+    build:
+      context: ./services/exams-service
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8080"
+    environment:
+      - DEBUG=True
+      - DB_NAME=exams_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=localhost
+      - DB_PORT=5432
+      - JWT_SECRET_KEY=local-jwt-secret-key
+      - CORE_SERVICE_URL=http://core-medical-service:8080
+    depends_on:
+      - postgres-exams
+    networks:
+      - medical-network
+
+  # Diagnosis Service
+  diagnosis-service:
+    build:
+      context: ./services/diagnosis-service
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8080"
+    environment:
+      - DEBUG=True
+      - DB_NAME=diagnosis_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=localhost
+      - DB_PORT=5432
+      - JWT_SECRET_KEY=local-jwt-secret-key
+      - CORE_SERVICE_URL=http://core-medical-service:8080
+    depends_on:
+      - postgres-diagnosis
+    networks:
+      - medical-network
+
+  # Surgery Service
+  surgery-service:
+    build:
+      context: ./services/surgery-service
+      dockerfile: Dockerfile
+    ports:
+      - "8003:8080"
+    environment:
+      - DEBUG=True
+      - DB_NAME=surgery_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=localhost
+      - DB_PORT=5432
+      - JWT_SECRET_KEY=local-jwt-secret-key
+      - CORE_SERVICE_URL=http://core-medical-service:8080
+    depends_on:
+      - postgres-surgery
+    networks:
+      - medical-network
+
+  # Database for Core Medical Service
+  postgres-core:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=core_medical
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_core_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - medical-network
+
+  # Database for Exams Service
+  postgres-exams:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=exams_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_exams_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - medical-network
+
+  # Database for Diagnosis Service
+  postgres-diagnosis:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=diagnosis_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_diagnosis_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    networks:
+      - medical-network
+
+  # Database for Surgery Service
+  postgres-surgery:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=surgery_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_surgery_data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    networks:
+      - medical-network
+
+  # Nginx Load Balancer (Local API Gateway)
+  nginx-gateway:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - core-medical-service
+      - exams-service
+      - diagnosis-service
+      - surgery-service
+    networks:
+      - medical-network
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - medical-network
+
+volumes:
+  postgres_core_data:
+  postgres_exams_data:
+  postgres_diagnosis_data:
+  postgres_surgery_data:
+
+networks:
+  medical-network:
+    driver: bridge

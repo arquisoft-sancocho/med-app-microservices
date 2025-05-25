@@ -2,6 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
 from . import api_views
+from . import jwt_views
 
 # API Router for microservice endpoints
 router = DefaultRouter()
@@ -12,6 +13,11 @@ urlpatterns = [
     # Health check endpoints
     path('ready', views.readiness_check, name='readiness_check'),
     path('live', views.liveness_check, name='liveness_check'),
+
+    # JWT Authentication endpoints
+    path('auth/login/', jwt_views.jwt_login, name='jwt-login'),
+    path('auth/validate/', jwt_views.jwt_validate, name='jwt-validate'),
+    path('auth/refresh/', jwt_views.jwt_refresh, name='jwt-refresh'),
 
     # API endpoints for microservices
     path('api/', include(router.urls)),

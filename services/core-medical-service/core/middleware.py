@@ -21,6 +21,10 @@ class LoginRequiredMiddleware(MiddlewareMixin):
             '/admin/login/',          # Admin login page
             '/health/ready',          # Health check endpoints
             '/health/live',           # Health check endpoints
+            '/auth/login/',           # JWT login endpoint
+            '/auth/validate/',        # JWT validation endpoint
+            '/auth/refresh/',         # JWT refresh endpoint
+            '/api/',                  # API endpoints for microservices
             # Add any other paths that should be accessible without login
         ]
         # Also compile patterns to match dynamic paths like password reset URLs
