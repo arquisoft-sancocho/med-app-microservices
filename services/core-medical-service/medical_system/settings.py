@@ -29,6 +29,10 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
+# Ensure the load balancer IP is explicitly allowed
+if '34.36.102.101' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('34.36.102.101')
+
 
 # Application definition - Core service only includes patients, consultations and auth
 
@@ -127,12 +131,19 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'False').lower() == 'true'
 
+# Security settings for production
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None  # Disable COOP for HTTP compatibility
+SECURE_REFERRER_POLICY = "same-origin"
+X_FRAME_OPTIONS = 'DENY'
+
 # CSRF trusted origins for Cloud Run URLs
 CSRF_TRUSTED_ORIGINS = [
     "https://core-medical-service-75l2ychmxa-uc.a.run.app",
     "https://core-medical-service-43021834801.us-central1.run.app",
     "https://*.run.app",  # Allow all Cloud Run URLs
     "https://*.googleusercontent.com",  # Load balancer URLs
+    "http://34.36.102.101",  # Load balancer HTTP
+    "https://34.36.102.101",  # Load balancer HTTPS
     "http://localhost:8000",  # Development
 ]
 
