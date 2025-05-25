@@ -2,7 +2,7 @@
 
 [![Deploy Microservices to GCP](https://github.com/arquisoft-sancocho/med-app-microservices/actions/workflows/deploy-microservices.yml/badge.svg)](https://github.com/arquisoft-sancocho/med-app-microservices/actions/workflows/deploy-microservices.yml)
 
-Sistema de gestión médica distribuido en microservicios desplegado en Google Cloud Platform con Load Balancer global y autoescalamiento.
+Sistema de gestión médica distribuido en microservicios desplegado en Google Cloud Platform con Load Balancer global y autoescalamient.
 
 ## 🏗️ Arquitectura
 
