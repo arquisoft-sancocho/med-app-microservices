@@ -18,7 +18,7 @@ def access_secret_version(secret_id, version_id="latest", fallback=None):
 DEBUG = True  # Set to False for production
 
 # Cargar SECRET_KEY desde Secret Manager
-SECRET_KEY = access_secret_version("django-secret-key", fallback=SECRET_KEY)
+SECRET_KEY = access_secret_version("jwt-secret-key", fallback=SECRET_KEY)
 
 # Permitir hosts de Cloud Run
 ALLOWED_HOSTS = ['*']
