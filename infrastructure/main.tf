@@ -168,17 +168,17 @@ resource "google_compute_url_map" "api_gateway" {
     }
 
     path_rule {
-      paths   = ["/api/exams/*", "/api/examenes/*"]
+      paths   = ["/api/examenes/*"]
       service = google_compute_backend_service.exams_backend.id
     }
 
     path_rule {
-      paths   = ["/api/diagnosis/*", "/api/diagnostics/*", "/api/treatments/*"]
+      paths   = ["/api/diagnosticos/*", "/api/tratamientos/*"]
       service = google_compute_backend_service.diagnosis_backend.id
     }
 
     path_rule {
-      paths   = ["/api/surgeries/*", "/api/cirugias/*"]
+      paths   = ["/api/cirugias/*"]
       service = google_compute_backend_service.surgery_backend.id
     }
   }
@@ -189,47 +189,47 @@ resource "google_compute_url_map" "api_gateway" {
   }
 }
 
-# HTTPS proxy
-resource "google_compute_target_https_proxy" "https_proxy" {
-  name    = "medical-https-proxy"
-  url_map = google_compute_url_map.api_gateway.id
+# HTTPS proxy - commented out for testing
+# resource "google_compute_target_https_proxy" "https_proxy" {
+#   name    = "medical-https-proxy"
+#   url_map = google_compute_url_map.api_gateway.id
+#
+#   ssl_certificates = [google_compute_managed_ssl_certificate.ssl_cert.id]
+# }
 
-  ssl_certificates = [google_compute_managed_ssl_certificate.ssl_cert.id]
-}
+# SSL certificate - commented out for testing
+# resource "google_compute_managed_ssl_certificate" "ssl_cert" {
+#   name = "medical-ssl-cert"
+#
+#   managed {
+#     domains = ["medical-api.example.com"] # Replace with your domain
+#   }
+# }
 
-# SSL certificate
-resource "google_compute_managed_ssl_certificate" "ssl_cert" {
-  name = "medical-ssl-cert"
+# Global forwarding rule for HTTPS - commented out for testing
+# resource "google_compute_global_forwarding_rule" "https_forwarding_rule" {
+#   name       = "medical-https-forwarding-rule"
+#   target     = google_compute_target_https_proxy.https_proxy.id
+#   port_range = "443"
+#   ip_address = google_compute_global_address.lb_ip.address
+# }
 
-  managed {
-    domains = ["medical-api.example.com"] # Replace with your domain
-  }
-}
-
-# Global forwarding rule for HTTPS
-resource "google_compute_global_forwarding_rule" "https_forwarding_rule" {
-  name       = "medical-https-forwarding-rule"
-  target     = google_compute_target_https_proxy.https_proxy.id
-  port_range = "443"
-  ip_address = google_compute_global_address.lb_ip.address
-}
-
-# HTTP proxy for redirect to HTTPS
+# HTTP proxy - temporarily use main URL map instead of redirect
 resource "google_compute_target_http_proxy" "http_proxy" {
   name    = "medical-http-proxy"
-  url_map = google_compute_url_map.redirect_to_https.id
+  url_map = google_compute_url_map.api_gateway.id
 }
 
-# URL map for HTTP to HTTPS redirect
-resource "google_compute_url_map" "redirect_to_https" {
-  name = "redirect-to-https"
-
-  default_url_redirect {
-    redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
-    strip_query            = false
-    https_redirect         = true
-  }
-}
+# URL map for HTTP to HTTPS redirect - commented out for testing
+# resource "google_compute_url_map" "redirect_to_https" {
+#   name = "redirect-to-https"
+#
+#   default_url_redirect {
+#     redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
+#     strip_query            = false
+#     https_redirect         = true
+#   }
+# }
 
 # Global forwarding rule for HTTP (redirect to HTTPS)
 resource "google_compute_global_forwarding_rule" "http_forwarding_rule" {

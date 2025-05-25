@@ -1,0 +1,28 @@
+defaultService: https://www.googleapis.com/compute/v1/projects/molten-avenue-460900-a0/global/backendServices/core-medical-backend
+hostRules:
+- hosts:
+  - '*'
+  pathMatcher: core-medical-matcher
+name: medical-api-gateway
+pathMatchers:
+- defaultService: https://www.googleapis.com/compute/v1/projects/molten-avenue-460900-a0/global/backendServices/core-medical-backend
+  name: core-medical-matcher
+  pathRules:
+  - paths:
+    - /api/patients/*
+    - /api/consultations/*
+    - /auth/*
+    - /accounts/*
+    - /admin
+    - /admin/*
+    service: https://www.googleapis.com/compute/v1/projects/molten-avenue-460900-a0/global/backendServices/core-medical-backend
+  - paths:
+    - /api/examenes/*
+    service: https://www.googleapis.com/compute/v1/projects/molten-avenue-460900-a0/global/backendServices/exams-backend
+  - paths:
+    - /api/diagnosticos/*
+    - /api/tratamientos/*
+    service: https://www.googleapis.com/compute/v1/projects/molten-avenue-460900-a0/global/backendServices/diagnosis-backend
+  - paths:
+    - /api/cirugias/*
+    service: https://www.googleapis.com/compute/v1/projects/molten-avenue-460900-a0/global/backendServices/surgery-backend

@@ -132,6 +132,12 @@ jobs:
             --role="roles/run.invoker" \
             --region=${{ env.REGION }} || true
 
+          # Configure ingress for Load Balancer compatibility
+          gcloud run services update core-medical-service --region=${{ env.REGION }} --ingress=all
+          gcloud run services update exams-service --region=${{ env.REGION }} --ingress=all
+          gcloud run services update diagnosis-service --region=${{ env.REGION }} --ingress=all
+          gcloud run services update surgery-service --region=${{ env.REGION }} --ingress=all
+
       - name: 'Apply Load Balancer Terraform Configuration'
         env:
           TF_VAR_project_id: ${{ env.PROJECT_ID }}
@@ -156,12 +162,8 @@ jobs:
           terraform import google_compute_backend_service.diagnosis_backend "projects/${{ env.PROJECT_ID }}/global/backendServices/diagnosis-backend" || echo "Diagnosis Backend import: proceeding..."
           terraform import google_compute_backend_service.surgery_backend "projects/${{ env.PROJECT_ID }}/global/backendServices/surgery-backend" || echo "Surgery Backend import: proceeding..."
           terraform import google_compute_url_map.api_gateway "projects/${{ env.PROJECT_ID }}/global/urlMaps/medical-api-gateway" || echo "API Gateway URL Map import: proceeding..."
-          terraform import google_compute_url_map.redirect_to_https "projects/${{ env.PROJECT_ID }}/global/urlMaps/redirect-to-https" || echo "URL Map redirect import: proceeding..."
           terraform import google_compute_target_http_proxy.http_proxy "projects/${{ env.PROJECT_ID }}/global/targetHttpProxies/medical-http-proxy" || echo "HTTP Proxy import: proceeding..."
-          terraform import google_compute_target_https_proxy.https_proxy "projects/${{ env.PROJECT_ID }}/global/targetHttpsProxies/medical-https-proxy" || echo "HTTPS Proxy import: proceeding..."
           terraform import google_compute_global_forwarding_rule.http_forwarding_rule "projects/${{ env.PROJECT_ID }}/global/forwardingRules/medical-http-forwarding-rule" || echo "HTTP Forwarding Rule import: proceeding..."
-          terraform import google_compute_global_forwarding_rule.https_forwarding_rule "projects/${{ env.PROJECT_ID }}/global/forwardingRules/medical-https-forwarding-rule" || echo "HTTPS Forwarding Rule import: proceeding..."
-          terraform import google_compute_managed_ssl_certificate.ssl_cert "projects/${{ env.PROJECT_ID }}/global/sslCertificates/medical-ssl-cert" || echo "SSL Cert import: proceeding..."
           terraform import google_compute_global_address.lb_ip "projects/${{ env.PROJECT_ID }}/global/addresses/medical-lb-ip" || echo "Global Address import: proceeding..."
           echo "Finished attempting to import resources."
           terraform plan
@@ -175,7 +177,9 @@ jobs:
           echo "🔗 Access your microservices at: http://$(terraform output -raw load_balancer_ip)"
           echo ""
           echo "📋 Service endpoints:"
-          echo "   Core Medical: http://$(terraform output -raw load_balancer_ip)/"
-          echo "   Exams: http://$(terraform output -raw load_balancer_ip)/api/exams/"
-          echo "   Diagnosis: http://$(terraform output -raw load_balancer_ip)/api/diagnosis/"
-          echo "   Surgery: http://$(terraform output -raw load_balancer_ip)/api/surgeries/"
+          echo "   Core Medical (Django Admin): http://$(terraform output -raw load_balancer_ip)/"
+          echo "   Core Medical Health: http://$(terraform output -raw load_balancer_ip)/health/ready"
+          echo "   Exams API: http://$(terraform output -raw load_balancer_ip)/api/examenes/"
+          echo "   Diagnosis API: http://$(terraform output -raw load_balancer_ip)/api/diagnosticos/"
+          echo "   Surgery API: http://$(terraform output -raw load_balancer_ip)/api/cirugias/"
+          echo "   Treatments API: http://$(terraform output -raw load_balancer_ip)/api/tratamientos/"
