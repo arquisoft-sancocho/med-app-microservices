@@ -83,12 +83,11 @@ WSGI_APPLICATION = 'medical_system.wsgi.application'
 # Database settings
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': access_secret_version("db-name"),
-        'USER': access_secret_version("db-user"),
-        'PASSWORD': access_secret_version("db-password"),
-        'HOST': '127.0.0.1',  # Para Cloud SQL Proxy local
-        'PORT': '5432',
+        'NAME': os.getenv('DB_NAME', 'core_medical'),
+        'USER': os.getenv('DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 
