@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Detalles del Diagnóstico</h2>
+
+<p><strong>Nombre:</strong> {{ diagnostico.nombre }}</p>
+<p><strong>Fecha de realización:</strong> {{ diagnostico.fecha_realizacion }}</p>
+<p><strong>Paciente:</strong> {{ diagnostico.paciente.nombre }}</p>
+<p><strong>Resultados obtenidos:</strong> {{ diagnostico.resultados_obtenidos }}</p>
+<p><strong>Información extra:</strong> {{ diagnostico.info_extra }}</p>
+
+<h3>Tratamientos</h3>
+{% if tratamientos %}
+<ul>
+    {% for tratamiento in tratamientos %}
+    <li>
+        {{ tratamiento.nombre }} ({{ tratamiento.fecha_inicio }} - {{ tratamiento.fecha_fin }})
+        <p>{{ tratamiento.indicaciones }}</p>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No hay tratamientos asociados a este diagnóstico.</p>
+{% endif %}
+
+<a href="{% url 'addTratamiento' diagnostico.id %}" class="btn btn-primary">Añadir Tratamiento</a>
+<a href="{% url 'diagnosticoEdit' diagnostico.id %}" class="btn btn-warning">Editar Diagnóstico</a>
+<a href="{% url 'diagnosticoList' %}" class="btn btn-secondary">Volver a la lista</a>
+{% endblock %}

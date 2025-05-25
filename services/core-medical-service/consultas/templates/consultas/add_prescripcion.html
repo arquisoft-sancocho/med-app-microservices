@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Añadir Prescripción para {{ consulta.nombre }}</h2>
+<p>Paciente: {{ consulta.paciente.nombre }}</p>
+
+<form method="POST">
+    {% csrf_token %}
+    
+    {{ form.non_field_errors }}
+    
+    {{ form.as_p }}
+    
+    <button type="submit" class="btn btn-success">Guardar Prescripción</button>
+    <a href="{% url 'consultaDetail' consulta.id %}" class="btn btn-secondary">Cancelar</a>
+</form>
+
+{% endblock %}

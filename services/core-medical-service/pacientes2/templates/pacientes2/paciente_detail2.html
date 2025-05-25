@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Detalles del Paciente</h2>
+<p><strong>Nombre:</strong> {{ paciente2.nombre }}</p>
+<p><strong>Edad:</strong> {{ paciente2.edad }} años</p>
+<p><strong>Fecha de Nacimiento:</strong> {{ paciente2.fecha_nacimiento }}</p>
+<p><strong>Género:</strong> {{ paciente2.get_genero_display }}</p>
+<p><strong>Dirección:</strong> {{ paciente2.direccion }}</p>
+<p><strong>Teléfono:</strong> {{ paciente2.telefono }}</p>
+<p><strong>Tipo de Sangre:</strong> {{ paciente2.get_tipo_sangre_display }}</p>
+<p><strong>Fecha de Registro:</strong> {{ paciente2.fecha_registro}}</p>
+
+<a href="{% url 'historiaClinica' paciente2.id %}" class="btn btn-info">Ver Historia Clínica</a>
+<a href="{% url 'informacionCritica' paciente2.id %}" class="btn btn-info">Ver Información Crítica</a>
+<a href="{% url 'pacienteEdit2' paciente2.id %}" class="btn btn-warning">Editar Paciente</a>
+<a href="{% url 'pacienteList2' %}" class="btn btn-primary">Volver a la lista</a>
+{% endblock %}

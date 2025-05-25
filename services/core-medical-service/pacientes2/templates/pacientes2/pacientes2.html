@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="content">
+    <div class="">
+        <div class="page-header-title">
+            <h4 class="page-title">Pacientes</h4>
+            <div style="text-align:right;">
+                <button type="button" class="btn btn-success waves-effect waves-light"
+                        onClick=" window.location.href='pacienteCreate2' " style="text-align:center;">+
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="page-content-wrapper">
+        <div class="container">
+            <!-- Content page -->
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    <table class="table table-hover">
+                        <thead>
+                        <tr style="color:#0E2EB0">
+                            <th>Nombre</th>
+                            <th>Fecha de Registro</th>
+                            {% if puede_eliminar %}
+                                <th>Eliminar</th>
+                            {% endif %}
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {% for paciente2 in paciente_list2 %}
+                        <tr>
+                            <td><a href="{% url 'pacienteDetail2' paciente2.id %}">{{ paciente2.nombre }}</a></td>
+                            <td>{{ paciente2.fecha_registro }}</td>
+                            {% if puede_eliminar %}
+                                <td>
+                                    <form method="POST" action="{% url 'pacienteDelete2' paciente2.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger waves-effect waves-light" onclick="return confirm('¿Estás seguro de que quieres eliminar este paciente?');">-</button>
+                                    </form>
+                                </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+
+                    <div style="text-align:center;">
+                        <button type="button" class="btn btn-primary waves-effect waves-light"
+                                onClick=" window.location.href='/' ">
+                            Regresar
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
