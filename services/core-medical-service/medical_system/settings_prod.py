@@ -7,7 +7,7 @@ from google.cloud import secretmanager
 def access_secret_version(secret_id, version_id="latest", fallback=None):
     try:
         client = secretmanager.SecretManagerServiceClient()
-        name = f"projects/arquisoft-453601/secrets/{secret_id}/versions/{version_id}"
+        name = f"projects/molten-avenue-460900-a0/secrets/{secret_id}/versions/{version_id}"
         response = client.access_secret_version(request={"name": name})
         return response.payload.data.decode("UTF-8")
     except Exception as e:
@@ -176,3 +176,57 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+# Microservice URLs - Dynamic configuration for production
+EXAMS_SERVICE_URL = os.getenv('EXAMS_SERVICE_URL', 'http://localhost:8001')
+DIAGNOSIS_SERVICE_URL = os.getenv('DIAGNOSIS_SERVICE_URL', 'http://localhost:8002')  
+SURGERY_SERVICE_URL = os.getenv('SURGERY_SERVICE_URL', 'http://localhost:8003')
+
+# REST Framework configuration
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'core.authentication.JWTAuthentication',  # JWT for microservices
+        'rest_framework.authentication.SessionAuthentication',  # Session for web UI
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20
+}
+
+# CORS settings for microservice communication
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://localhost:8001", 
+    "http://localhost:8002",
+    "http://localhost:8003",
+    "https://core-medical-service-*.run.app",
+    "https://exams-service-*.run.app",
+    "https://diagnosis-service-*.run.app",
+    "https://surgery-service-*.run.app",
+]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.run\.app$",  # Allow all Cloud Run URLs
+    r"^https://.*\.googleusercontent\.com$",  # Load balancer URLs
+]
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'False').lower() == 'true'
+
+# Update CSRF trusted origins for production
+CSRF_TRUSTED_ORIGINS = [
+    "https://core-medical-service-75l2ychmxa-uc.a.run.app",
+    "https://core-medical-service-43021834801.us-central1.run.app", 
+    "https://*.run.app",  # Allow all Cloud Run URLs
+    "https://*.googleusercontent.com",  # Load balancer URLs
+    "http://34.36.102.101",  # Load balancer HTTP
+    "https://34.36.102.101",  # Load balancer HTTPS
+    "http://localhost:8000",  # Development
+]
+
+# Security settings for production
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None  # Disable COOP for HTTP compatibility
+SECURE_REFERRER_POLICY = "same-origin"
+X_FRAME_OPTIONS = 'DENY'

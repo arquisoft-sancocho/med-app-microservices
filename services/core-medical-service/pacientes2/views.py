@@ -48,7 +48,7 @@ def paciente_detail2(request, paciente_id):
 @login_required
 @permission_required('pacientes2.view_paciente2', raise_exception=True)
 def historia_clinica_view(request, paciente_id):
-    historia = get_historia_clinica(paciente_id)
+    historia = get_historia_clinica(paciente_id, request)
 
     if not historia:
         return HttpResponse("Paciente no encontrado", status=404)
@@ -79,7 +79,7 @@ def paciente_delete2(request, paciente_id):
 @login_required
 @permission_required('pacientes2.view_paciente2', raise_exception=True)
 def informacion_critica(request, paciente_id):
-    informacion = get_informacion_critica(paciente_id)
+    informacion = get_informacion_critica(paciente_id, request)
     
     if not informacion:
         return HttpResponse("Paciente no encontrado", status=404)

@@ -31,7 +31,7 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PORT=8080
-ENV DJANGO_SETTINGS_MODULE=medical_system.settings
+ENV DJANGO_SETTINGS_MODULE=medical_system.settings_prod
 
 # Install runtime dependencies only
 RUN apt-get update \

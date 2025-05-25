@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de Examen{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Detalle del Examen</h2>
+                <div class="btn-group">
+                    <a href="{% url 'examenes_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a Lista
+                    </a>
+                </div>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if exam %}
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Información del Examen #{{ exam.id }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <th width="40%">Tipo de Examen:</th>
+                                        <td>{{ exam.tipo_examen|default:"No especificado" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Fecha:</th>
+                                        <td>{{ exam.fecha|date:"d/m/Y H:i" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Estado:</th>
+                                        <td>
+                                            <span class="badge bg-{{ exam.estado|lower }} fs-6">
+                                                {{ exam.estado|default:"Pendiente" }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% if exam.medico %}
+                                    <tr>
+                                        <th>Médico:</th>
+                                        <td>{{ exam.medico }}</td>
+                                    </tr>
+                                    {% endif %}
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                {% if exam.paciente_info %}
+                                <h6>Información del Paciente</h6>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <th width="40%">Nombre:</th>
+                                        <td>{{ exam.paciente_info.nombres }} {{ exam.paciente_info.apellidos }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Cédula:</th>
+                                        <td>{{ exam.paciente_info.cedula }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Edad:</th>
+                                        <td>{{ exam.paciente_info.edad|default:"No especificada" }}</td>
+                                    </tr>
+                                </table>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if exam.descripcion %}
+                        <hr>
+                        <h6>Descripción</h6>
+                        <p class="text-muted">{{ exam.descripcion }}</p>
+                        {% endif %}
+
+                        {% if exam.resultados %}
+                        <hr>
+                        <h6>Resultados</h6>
+                        <div class="border p-3 rounded bg-light">
+                            {{ exam.resultados|linebreaks }}
+                        </div>
+                        {% endif %}
+
+                        {% if exam.observaciones %}
+                        <hr>
+                        <h6>Observaciones</h6>
+                        <p class="text-muted">{{ exam.observaciones }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                        <h5>Examen no encontrado</h5>
+                        <p class="text-muted">No se pudo cargar la información del examen solicitado.</p>
+                        <a href="{% url 'examenes_list' %}" class="btn btn-primary">Volver a la Lista</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .badge.bg-pendiente { background-color: #ffc107 !important; }
+    .badge.bg-completado { background-color: #198754 !important; }
+    .badge.bg-cancelado { background-color: #dc3545 !important; }
+</style>
+{% endblock %}

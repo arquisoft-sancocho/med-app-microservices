@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from . import views
 from core import views as core_views
+from core import microservice_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,13 +30,19 @@ urlpatterns = [
     path('consultas/', include('consultas.urls')),
     path('health/', include('core.urls')), # Health checks
     
-    # Microservice redirects for seamless navigation
-    path('examenes/', views.examenes_redirect, name='examenes_redirect'),
-    path('examenes/<path:path>', views.examenes_redirect, name='examenes_redirect_path'),
-    path('diagnosticos/', views.diagnosticos_redirect, name='diagnosticos_redirect'),
-    path('diagnosticos/<path:path>', views.diagnosticos_redirect, name='diagnosticos_redirect_path'),
-    path('cirugias/', views.cirugias_redirect, name='cirugias_redirect'),
-    path('cirugias/<path:path>', views.cirugias_redirect, name='cirugias_redirect_path'),
+    # Microservice API integration views (replaces redirects)
+    path('examenes/', microservice_views.examenes_list, name='examenes_list'),
+    path('examenes/patient/<int:patient_id>/', microservice_views.examenes_patient, name='examenes_patient'),
+    path('examenes/detail/<int:exam_id>/', microservice_views.examenes_detail, name='examenes_detail'),
+    
+    path('diagnosticos/', microservice_views.diagnosticos_list, name='diagnosticos_list'),
+    path('diagnosticos/patient/<int:patient_id>/', microservice_views.diagnosticos_patient, name='diagnosticos_patient'),
+    
+    path('cirugias/', microservice_views.cirugias_list, name='cirugias_list'),
+    path('cirugias/patient/<int:patient_id>/', microservice_views.cirugias_patient, name='cirugias_patient'),
+    
+    # Microservice status endpoint
+    path('services/status/', microservice_views.services_status, name='services_status'),
     
     # API endpoints for microservice communication
     path('', include('pacientes2.api_urls')),

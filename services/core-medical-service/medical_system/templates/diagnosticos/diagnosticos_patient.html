@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Diagnósticos de {{ patient.nombres }} {{ patient.apellidos }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2>Diagnósticos del Paciente</h2>
+                    {% if patient %}
+                    <p class="text-muted">{{ patient.nombres }} {{ patient.apellidos }} - CC: {{ patient.cedula }}</p>
+                    {% endif %}
+                </div>
+                <div class="btn-group">
+                    <a href="{% url 'diagnosticos_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a Lista
+                    </a>
+                    {% if patient %}
+                    <a href="{% url 'pacienteDetail2' patient.id %}" class="btn btn-outline-primary">
+                        <i class="fas fa-user"></i> Ver Paciente
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Historial de Diagnósticos</h5>
+                </div>
+                <div class="card-body">
+                    {% if diagnosticos %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Diagnóstico</th>
+                                        <th>Gravedad</th>
+                                        <th>Descripción</th>
+                                        <th>Tratamiento</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for diagnostico in diagnosticos %}
+                                    <tr>
+                                        <td>{{ diagnostico.fecha|date:"d/m/Y H:i" }}</td>
+                                        <td>{{ diagnostico.diagnostico|default:"No especificado" }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ diagnostico.gravedad|lower }}">
+                                                {{ diagnostico.gravedad|default:"Normal" }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if diagnostico.descripcion %}
+                                                <small class="text-truncate d-inline-block" style="max-width: 200px;">
+                                                    {{ diagnostico.descripcion }}
+                                                </small>
+                                            {% else %}
+                                                <span class="text-muted">Sin descripción</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if diagnostico.tratamiento %}
+                                                <small class="text-truncate d-inline-block" style="max-width: 200px;">
+                                                    {{ diagnostico.tratamiento }}
+                                                </small>
+                                            {% else %}
+                                                <span class="text-muted">Sin tratamiento</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-stethoscope fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">Este paciente no tiene diagnósticos registrados.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .badge.bg-leve { background-color: #198754 !important; }
+    .badge.bg-moderado { background-color: #ffc107 !important; }
+    .badge.bg-grave { background-color: #dc3545 !important; }
+    .badge.bg-critico { background-color: #6f42c1 !important; }
+</style>
+{% endblock %}

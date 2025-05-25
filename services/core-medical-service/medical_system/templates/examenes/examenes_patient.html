@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Exámenes de {{ patient.nombres }} {{ patient.apellidos }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2>Exámenes del Paciente</h2>
+                    {% if patient %}
+                    <p class="text-muted">{{ patient.nombres }} {{ patient.apellidos }} - CC: {{ patient.cedula }}</p>
+                    {% endif %}
+                </div>
+                <div class="btn-group">
+                    <a href="{% url 'examenes_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a Lista
+                    </a>
+                    {% if patient %}
+                    <a href="{% url 'pacienteDetail2' patient.id %}" class="btn btn-outline-primary">
+                        <i class="fas fa-user"></i> Ver Paciente
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Historial de Exámenes</h5>
+                </div>
+                <div class="card-body">
+                    {% if examenes %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo de Examen</th>
+                                        <th>Estado</th>
+                                        <th>Resultados</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for examen in examenes %}
+                                    <tr>
+                                        <td>{{ examen.fecha|date:"d/m/Y H:i" }}</td>
+                                        <td>{{ examen.tipo_examen|default:"No especificado" }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ examen.estado|lower }}">
+                                                {{ examen.estado|default:"Pendiente" }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if examen.resultados %}
+                                                <small class="text-truncate d-inline-block" style="max-width: 200px;">
+                                                    {{ examen.resultados }}
+                                                </small>
+                                            {% else %}
+                                                <span class="text-muted">Sin resultados</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'examenes_detail' examen.id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i> Ver Detalle
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-file-medical fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">Este paciente no tiene exámenes registrados.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .badge.bg-pendiente { background-color: #ffc107 !important; }
+    .badge.bg-completado { background-color: #198754 !important; }
+    .badge.bg-cancelado { background-color: #dc3545 !important; }
+</style>
+{% endblock %}

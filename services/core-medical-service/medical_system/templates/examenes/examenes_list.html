@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Exámenes{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Gestión de Exámenes</h2>
+                <div class="btn-group">
+                    <a href="{% url 'services_status' %}" class="btn btn-outline-info">Estado Servicios</a>
+                </div>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if service_status %}
+                <div class="alert alert-success" role="alert">
+                    <i class="fas fa-check-circle"></i> Servicio de exámenes disponible
+                </div>
+            {% else %}
+                <div class="alert alert-warning" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> Servicio de exámenes no disponible
+                </div>
+            {% endif %}
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Lista de Exámenes</h5>
+                </div>
+                <div class="card-body">
+                    {% if examenes %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Paciente</th>
+                                        <th>Tipo de Examen</th>
+                                        <th>Fecha</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for examen in examenes %}
+                                    <tr>
+                                        <td>{{ examen.id }}</td>
+                                        <td>
+                                            {% if examen.paciente_info %}
+                                                {{ examen.paciente_info.nombres }} {{ examen.paciente_info.apellidos }}
+                                            {% else %}
+                                                Paciente ID: {{ examen.paciente_id }}
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ examen.tipo_examen|default:"No especificado" }}</td>
+                                        <td>{{ examen.fecha|date:"d/m/Y" }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ examen.estado|lower }}">
+                                                {{ examen.estado|default:"Pendiente" }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'examenes_detail' examen.id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i> Ver
+                                            </a>
+                                            {% if examen.paciente_id %}
+                                            <a href="{% url 'examenes_patient' examen.paciente_id %}" class="btn btn-sm btn-outline-secondary">
+                                                <i class="fas fa-user"></i> Paciente
+                                            </a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-file-medical fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No hay exámenes disponibles en este momento.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .badge.bg-pendiente { background-color: #ffc107 !important; }
+    .badge.bg-completado { background-color: #198754 !important; }
+    .badge.bg-cancelado { background-color: #dc3545 !important; }
+</style>
+{% endblock %}

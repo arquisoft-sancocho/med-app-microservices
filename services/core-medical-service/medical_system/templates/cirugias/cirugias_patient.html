@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Cirugías de {{ patient.nombres }} {{ patient.apellidos }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2>Cirugías del Paciente</h2>
+                    {% if patient %}
+                    <p class="text-muted">{{ patient.nombres }} {{ patient.apellidos }} - CC: {{ patient.cedula }}</p>
+                    {% endif %}
+                </div>
+                <div class="btn-group">
+                    <a href="{% url 'cirugias_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a Lista
+                    </a>
+                    {% if patient %}
+                    <a href="{% url 'pacienteDetail2' patient.id %}" class="btn btn-outline-primary">
+                        <i class="fas fa-user"></i> Ver Paciente
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Historial de Cirugías</h5>
+                </div>
+                <div class="card-body">
+                    {% if cirugias %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo de Cirugía</th>
+                                        <th>Estado</th>
+                                        <th>Cirujano</th>
+                                        <th>Duración</th>
+                                        <th>Observaciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cirugia in cirugias %}
+                                    <tr>
+                                        <td>{{ cirugia.fecha|date:"d/m/Y H:i" }}</td>
+                                        <td>{{ cirugia.tipo_cirugia|default:"No especificado" }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ cirugia.estado|lower }}">
+                                                {{ cirugia.estado|default:"Programada" }}
+                                            </span>
+                                        </td>
+                                        <td>{{ cirugia.cirujano|default:"No asignado" }}</td>
+                                        <td>
+                                            {% if cirugia.duracion %}
+                                                {{ cirugia.duracion }} min
+                                            {% else %}
+                                                <span class="text-muted">No especificada</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if cirugia.observaciones %}
+                                                <small class="text-truncate d-inline-block" style="max-width: 200px;">
+                                                    {{ cirugia.observaciones }}
+                                                </small>
+                                            {% else %}
+                                                <span class="text-muted">Sin observaciones</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-user-md fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">Este paciente no tiene cirugías registradas.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .badge.bg-programada { background-color: #0dcaf0 !important; }
+    .badge.bg-enprogreso { background-color: #ffc107 !important; }
+    .badge.bg-completada { background-color: #198754 !important; }
+    .badge.bg-cancelada { background-color: #dc3545 !important; }
+</style>
+{% endblock %}
