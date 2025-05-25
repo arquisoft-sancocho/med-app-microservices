@@ -73,16 +73,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 EXPOSE 8080
 
 # Run gunicorn with optimized settings
-CMD ["gunicorn", \
-    "--bind", "0.0.0.0:8080", \
-    "--workers", "2", \
-    "--worker-class", "gevent", \
-    "--worker-connections", "1000", \
-    "--timeout", "30", \
-    "--keepalive", "5", \
-    "--max-requests", "1000", \
-    "--max-requests-jitter", "100", \
-    "--preload", \
-    "--access-logfile", "-", \
-    "--error-logfile", "-", \
-    "medical_system.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--worker-class", "gevent", "--worker-connections", "1000", "--timeout", "30", "--keepalive", "5", "--max-requests", "1000", "--max-requests-jitter", "100", "--preload", "--access-logfile", "-", "--error-logfile", "-", "medical_system.wsgi:application"]
