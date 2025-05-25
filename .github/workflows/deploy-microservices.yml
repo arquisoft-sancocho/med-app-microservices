@@ -104,6 +104,11 @@ jobs:
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
 
+      - name: 'Setup Terraform'
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.0
+
       - name: 'Deploy Load Balancer Configuration'
         run: |
           # Create backend services for each microservice
@@ -133,3 +138,16 @@ jobs:
           terraform init
           terraform plan -var="project_id=${{ env.PROJECT_ID }}" -var="region=${{ env.REGION }}"
           terraform apply -auto-approve -var="project_id=${{ env.PROJECT_ID }}" -var="region=${{ env.REGION }}"
+          
+      - name: 'Output Load Balancer Information'
+        run: |
+          cd infrastructure
+          echo "🌐 Load Balancer deployed successfully!"
+          echo "📍 Load Balancer IP: $(terraform output -raw load_balancer_ip)"
+          echo "🔗 Access your microservices at: http://$(terraform output -raw load_balancer_ip)"
+          echo ""
+          echo "📋 Service endpoints:"
+          echo "   Core Medical: http://$(terraform output -raw load_balancer_ip)/"
+          echo "   Exams: http://$(terraform output -raw load_balancer_ip)/exams/"
+          echo "   Diagnosis: http://$(terraform output -raw load_balancer_ip)/diagnosis/"
+          echo "   Surgery: http://$(terraform output -raw load_balancer_ip)/surgery/"
