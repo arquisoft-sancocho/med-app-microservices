@@ -25,6 +25,7 @@ from core import microservice_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
+    path('test-url/', views.test_url_resolution, name='test_url'),
     # Include app-specific URLs - Core service only
     path('', include('pacientes2.urls')),
     path('consultas/', include('consultas.urls')),

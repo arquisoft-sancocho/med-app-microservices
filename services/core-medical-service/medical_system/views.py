@@ -6,6 +6,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+def test_url_resolution(request):
+    """Simple test view to check if URL routing works"""
+    return HttpResponse("URL routing works!", content_type="text/plain")
+
 @login_required
 def index(request):
     try:

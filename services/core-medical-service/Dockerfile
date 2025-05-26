@@ -30,7 +30,7 @@ FROM python:3.11-slim
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV PORT=8080
+ENV PORT=8000
 ENV DJANGO_SETTINGS_MODULE=medical_system.settings_prod
 
 # Install runtime dependencies only
@@ -70,7 +70,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:$PORT/health/ready || exit 1
 
 # Expose port
-EXPOSE 8080
+EXPOSE 8000
 
 # Run gunicorn with optimized settings
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--timeout", "30", "--access-logfile", "-", "--error-logfile", "-", "medical_system.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "--timeout", "30", "--access-logfile", "-", "--error-logfile", "-", "medical_system.wsgi:application"]
