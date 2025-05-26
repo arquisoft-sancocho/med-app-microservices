@@ -88,9 +88,95 @@ jobs:
             --startup-probe="httpGet.path=/health/ready,initialDelaySeconds=10,timeoutSeconds=5,periodSeconds=10,failureThreshold=3" \
             --liveness-probe="httpGet.path=/health/live,initialDelaySeconds=30,timeoutSeconds=5,periodSeconds=30,failureThreshold=3"
 
-  setup-load-balancer:
+  update-microservice-urls:
     runs-on: ubuntu-latest
     needs: build-and-deploy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: 'Get microservice URLs and update core-medical-service'
+        run: |
+          echo "🔗 Getting microservice URLs..."
+          
+          # Get the URLs for all microservices
+          EXAMS_URL=$(gcloud run services describe exams-service --region=${{ env.REGION }} --format="value(status.url)")
+          DIAGNOSIS_URL=$(gcloud run services describe diagnosis-service --region=${{ env.REGION }} --format="value(status.url)")
+          SURGERY_URL=$(gcloud run services describe surgery-service --region=${{ env.REGION }} --format="value(status.url)")
+          
+          echo "📍 Microservice URLs:"
+          echo "   Exams Service: $EXAMS_URL"
+          echo "   Diagnosis Service: $DIAGNOSIS_URL"
+          echo "   Surgery Service: $SURGERY_URL"
+          
+          # Update core-medical-service with the microservice URLs
+          echo "🔄 Updating core-medical-service with microservice URLs..."
+          gcloud run services update core-medical-service \
+            --region=${{ env.REGION }} \
+            --update-env-vars="EXAMS_SERVICE_URL=$EXAMS_URL" \
+            --update-env-vars="DIAGNOSIS_SERVICE_URL=$DIAGNOSIS_URL" \
+            --update-env-vars="SURGERY_SERVICE_URL=$SURGERY_URL"
+          
+          echo "✅ Core medical service updated with microservice URLs!"
+
+  setup-permissions:
+    runs-on: ubuntu-latest
+    needs: [build-and-deploy, update-microservice-urls]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: 'Setup permissions and user groups'
+        run: |
+          echo "🔑 Setting up permissions and user groups..."
+          
+          # Get the core-medical-service URL
+          CORE_URL=$(gcloud run services describe core-medical-service --region=${{ env.REGION }} --format="value(status.url)")
+          
+          echo "📍 Core Medical Service URL: $CORE_URL"
+          
+          # Wait a moment for the service to be ready
+          echo "⏳ Waiting for service to be ready..."
+          sleep 30
+          
+          # Call the permissions setup endpoint
+          echo "🔧 Calling permissions setup API..."
+          curl -X POST "$CORE_URL/api/setup-permissions/" \
+            -H "Content-Type: application/json" \
+            -d '{"force": true}' \
+            --max-time 120 \
+            --retry 3 \
+            --retry-delay 10 || echo "⚠️ Permissions setup failed, but continuing..."
+          
+          # Check permissions status
+          echo "📊 Checking permissions status..."
+          curl -X GET "$CORE_URL/api/permissions-status/" \
+            --max-time 30 \
+            --retry 2 || echo "⚠️ Could not check permissions status"
+          
+          echo "✅ Permissions setup completed!"
+
+  setup-load-balancer:
+    runs-on: ubuntu-latest
+    needs: [build-and-deploy, update-microservice-urls, setup-permissions]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -183,3 +269,20 @@ jobs:
           echo "   Diagnosis API: http://$(terraform output -raw load_balancer_ip)/api/diagnosticos/"
           echo "   Surgery API: http://$(terraform output -raw load_balancer_ip)/api/cirugias/"
           echo "   Treatments API: http://$(terraform output -raw load_balancer_ip)/api/tratamientos/"
+          echo ""
+          echo "🔑 Permissions System:"
+          echo "   Setup Status: http://$(terraform output -raw load_balancer_ip)/api/permissions-status/"
+          echo "   User Groups: Administrador, Medico, Medico_de_Junta, Enfermero, Tecnico"
+          echo ""
+          echo "🎯 Individual microservice URLs are automatically configured:"
+          
+          # Get individual service URLs for reference
+          CORE_URL=$(gcloud run services describe core-medical-service --region=${{ env.REGION }} --format="value(status.url)" 2>/dev/null || echo "Not available")
+          EXAMS_URL=$(gcloud run services describe exams-service --region=${{ env.REGION }} --format="value(status.url)" 2>/dev/null || echo "Not available")
+          DIAGNOSIS_URL=$(gcloud run services describe diagnosis-service --region=${{ env.REGION }} --format="value(status.url)" 2>/dev/null || echo "Not available")
+          SURGERY_URL=$(gcloud run services describe surgery-service --region=${{ env.REGION }} --format="value(status.url)" 2>/dev/null || echo "Not available")
+          
+          echo "   Core Medical: $CORE_URL"
+          echo "   Exams Service: $EXAMS_URL"
+          echo "   Diagnosis Service: $DIAGNOSIS_URL"
+          echo "   Surgery Service: $SURGERY_URL"
