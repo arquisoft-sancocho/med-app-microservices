@@ -20,7 +20,7 @@ def examenes_list(request):
     """List all exams with microservice integration"""
     try:
         # Get exams from microservice
-        url = f"{settings.EXAMS_SERVICE_URL.rstrip('/')}/api/exams/"
+        url = f"{settings.EXAMS_SERVICE_URL.rstrip('/')}/public-api/examenes/"
         exams = microservice_client._make_request('GET', url)
         if exams is None:
             messages.error(request, "No se pudo conectar al servicio de exámenes")
@@ -76,7 +76,7 @@ def examenes_detail(request, exam_id):
 def diagnosticos_list(request):
     """List all diagnoses"""
     try:
-        url = f"{settings.DIAGNOSIS_SERVICE_URL.rstrip('/')}/api/diagnoses/"
+        url = f"{settings.DIAGNOSIS_SERVICE_URL.rstrip('/')}/public-api/diagnosticos/"
         diagnoses = microservice_client._make_request('GET', url)
         if diagnoses is None:
             messages.error(request, "No se pudo conectar al servicio de diagnósticos")
@@ -115,19 +115,11 @@ def diagnosticos_patient(request, patient_id):
 def cirugias_list(request):
     """List all surgeries"""
     try:
-        url = f"{settings.SURGERY_SERVICE_URL.rstrip('/')}/api/surgeries/"
+        url = f"{settings.SURGERY_SERVICE_URL.rstrip('/')}/api/public/cirugias/"
         surgeries = microservice_client._make_request('GET', url)
         if surgeries is None:
             messages.error(request, "No se pudo conectar al servicio de cirugías")
             surgeries = []
-
-        return render(request, 'cirugias/cirugias_list.html', {
-            'cirugias': surgeries.get('results', []) if surgeries else []
-        })
-    except Exception as e:
-        logger.error(f"Error loading surgeries: {e}")
-        messages.error(request, "Error al cargar las cirugías")
-        return render(request, 'cirugias/cirugias_list.html', {'cirugias': []})
 
         return render(request, 'cirugias/cirugias_list.html', {
             'cirugias': surgeries.get('results', []) if surgeries else []

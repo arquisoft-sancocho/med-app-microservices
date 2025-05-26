@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db.models import Q
 from .models import Cirugia2
 from .serializers import Cirugia2Serializer, Cirugia2BasicSerializer
@@ -103,3 +103,23 @@ class Cirugia2ViewSet(viewsets.ModelViewSet):
             'by_type': by_type,
             'by_status': by_status
         })
+
+class PublicCirugia2ViewSet(viewsets.ReadOnlyModelViewSet):
+    """Public API for microservice communication - no authentication required"""
+    queryset = Cirugia2.objects.all()
+    serializer_class = Cirugia2Serializer
+    permission_classes = [AllowAny]
+
+    @action(detail=False, methods=['get'])
+    def by_patient(self, request):
+        """Get all surgeries for a specific patient"""
+        patient_id = request.query_params.get('patient_id')
+        if not patient_id:
+            return Response(
+                {'error': 'patient_id parameter is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        surgeries = self.queryset.filter(paciente_id=patient_id)
+        serializer = self.get_serializer(surgeries, many=True)
+        return Response(serializer.data)

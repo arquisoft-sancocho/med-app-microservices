@@ -56,23 +56,23 @@ class MicroserviceClient:
     # Exams Service API calls
     def get_patient_exams(self, patient_id: int, request=None) -> List[Dict]:
         """Get all exams for a patient"""
-        url = f"{settings.EXAMS_SERVICE_URL.rstrip('/')}/api/exams/"
+        url = f"{settings.EXAMS_SERVICE_URL.rstrip('/')}/public-api/examenes/"
         headers = self._get_auth_headers(request)
-        params = {'paciente_id': patient_id}
+        params = {'patient_id': patient_id}
 
         result = self._make_request('GET', url, headers=headers, params=params)
         return result.get('results', []) if result else []
 
     def get_exam_detail(self, exam_id: int, request=None) -> Optional[Dict]:
         """Get detailed exam information"""
-        url = f"{settings.EXAMS_SERVICE_URL.rstrip('/')}/api/exams/{exam_id}/"
+        url = f"{settings.EXAMS_SERVICE_URL.rstrip('/')}/public-api/examenes/{exam_id}/"
         headers = self._get_auth_headers(request)
 
         return self._make_request('GET', url, headers=headers)
 
     def create_exam(self, exam_data: Dict, request=None) -> Optional[Dict]:
         """Create a new exam"""
-        url = f"{settings.EXAMS_SERVICE_URL.rstrip('/')}/api/exams/"
+        url = f"{settings.EXAMS_SERVICE_URL.rstrip('/')}/api/examenes/"
         headers = self._get_auth_headers(request)
 
         return self._make_request('POST', url, headers=headers, json=exam_data)
@@ -80,23 +80,23 @@ class MicroserviceClient:
     # Diagnosis Service API calls
     def get_patient_diagnoses(self, patient_id: int, request=None) -> List[Dict]:
         """Get all diagnoses for a patient"""
-        url = f"{settings.DIAGNOSIS_SERVICE_URL.rstrip('/')}/api/diagnoses/"
+        url = f"{settings.DIAGNOSIS_SERVICE_URL.rstrip('/')}/public-api/diagnosticos/"
         headers = self._get_auth_headers(request)
-        params = {'paciente_id': patient_id}
+        params = {'patient_id': patient_id}
 
         result = self._make_request('GET', url, headers=headers, params=params)
         return result.get('results', []) if result else []
 
     def get_diagnosis_detail(self, diagnosis_id: int, request=None) -> Optional[Dict]:
         """Get detailed diagnosis information"""
-        url = f"{settings.DIAGNOSIS_SERVICE_URL.rstrip('/')}/api/diagnoses/{diagnosis_id}/"
+        url = f"{settings.DIAGNOSIS_SERVICE_URL.rstrip('/')}/public-api/diagnosticos/{diagnosis_id}/"
         headers = self._get_auth_headers(request)
 
         return self._make_request('GET', url, headers=headers)
 
     def create_diagnosis(self, diagnosis_data: Dict, request=None) -> Optional[Dict]:
         """Create a new diagnosis"""
-        url = f"{settings.DIAGNOSIS_SERVICE_URL.rstrip('/')}/api/diagnoses/"
+        url = f"{settings.DIAGNOSIS_SERVICE_URL.rstrip('/')}/api/diagnosticos/"
         headers = self._get_auth_headers(request)
 
         return self._make_request('POST', url, headers=headers, json=diagnosis_data)
@@ -104,23 +104,23 @@ class MicroserviceClient:
     # Surgery Service API calls
     def get_patient_surgeries(self, patient_id: int, request=None) -> List[Dict]:
         """Get all surgeries for a patient"""
-        url = f"{settings.SURGERY_SERVICE_URL.rstrip('/')}/api/surgeries/"
+        url = f"{settings.SURGERY_SERVICE_URL.rstrip('/')}/api/public/cirugias/"
         headers = self._get_auth_headers(request)
-        params = {'paciente_id': patient_id}
+        params = {'patient_id': patient_id}
 
         result = self._make_request('GET', url, headers=headers, params=params)
         return result.get('results', []) if result else []
 
     def get_surgery_detail(self, surgery_id: int, request=None) -> Optional[Dict]:
         """Get detailed surgery information"""
-        url = f"{settings.SURGERY_SERVICE_URL.rstrip('/')}/api/surgeries/{surgery_id}/"
+        url = f"{settings.SURGERY_SERVICE_URL.rstrip('/')}/api/public/cirugias/{surgery_id}/"
         headers = self._get_auth_headers(request)
 
         return self._make_request('GET', url, headers=headers)
 
     def create_surgery(self, surgery_data: Dict, request=None) -> Optional[Dict]:
         """Create a new surgery"""
-        url = f"{settings.SURGERY_SERVICE_URL.rstrip('/')}/api/surgeries/"
+        url = f"{settings.SURGERY_SERVICE_URL.rstrip('/')}/api/cirugias/"
         headers = self._get_auth_headers(request)
 
         return self._make_request('POST', url, headers=headers, json=surgery_data)

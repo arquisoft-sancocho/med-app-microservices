@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from django.db.models import Q
 from .models import Diagnostico2, Tratamiento2
 from .serializers import (
@@ -118,3 +119,30 @@ class Tratamiento2ViewSet(viewsets.ModelViewSet):
         # Return full treatment data
         response_serializer = Tratamiento2Serializer(treatment)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+class PublicDiagnostico2ViewSet(viewsets.ReadOnlyModelViewSet):
+    """Public API for microservice communication - no authentication required"""
+    queryset = Diagnostico2.objects.all()
+    serializer_class = Diagnostico2Serializer
+    permission_classes = [AllowAny]
+
+    @action(detail=False, methods=['get'])
+    def by_patient(self, request):
+        """Get all diagnoses for a specific patient"""
+        patient_id = request.query_params.get('patient_id')
+        if not patient_id:
+            return Response(
+                {'error': 'patient_id parameter is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        diagnoses = self.queryset.filter(paciente_id=patient_id)
+        serializer = self.get_serializer(diagnoses, many=True)
+        return Response(serializer.data)
+
+
+class PublicTratamiento2ViewSet(viewsets.ReadOnlyModelViewSet):
+    """Public API for treatments - no authentication required"""
+    queryset = Tratamiento2.objects.all()
+    serializer_class = Tratamiento2Serializer
+    permission_classes = [AllowAny]

@@ -26,10 +26,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # path('test-url/', views.test_url_resolution, name='test_url'),  # Temporarily removed
 
-    # Microservice redirect views for navigation from templates - MUST BE BEFORE OTHER INCLUDES
-    path('examenes/', views.examenes_redirect, name='examenes_redirect'),
-    path('diagnosticos/', views.diagnosticos_redirect, name='diagnosticos_redirect'),
-    path('cirugias/', views.cirugias_redirect, name='cirugias_redirect'),
+    # Microservice API integration views (replacing redirects with API calls)
+    path('examenes/', microservice_views.examenes_list, name='examenes_redirect'),
+    path('diagnosticos/', microservice_views.diagnosticos_list, name='diagnosticos_redirect'),
+    path('cirugias/', microservice_views.cirugias_list, name='cirugias_redirect'),
 
     # Main index view
     path('', views.index, name='index'),

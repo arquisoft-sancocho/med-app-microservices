@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from django.db.models import Q
 from .models import Examen2
 from .serializers import Examen2Serializer, ExamenCreateSerializer
@@ -68,3 +69,23 @@ class Examen2ViewSet(viewsets.ModelViewSet):
         # Return full exam data
         response_serializer = Examen2Serializer(exam)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+class PublicExamen2ViewSet(viewsets.ReadOnlyModelViewSet):
+    """Public API for microservice communication - no authentication required"""
+    queryset = Examen2.objects.all()
+    serializer_class = Examen2Serializer
+    permission_classes = [AllowAny]
+
+    @action(detail=False, methods=['get'])
+    def by_patient(self, request):
+        """Get all exams for a specific patient"""
+        patient_id = request.query_params.get('patient_id')
+        if not patient_id:
+            return Response(
+                {'error': 'patient_id parameter is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        exams = self.queryset.filter(paciente_id=patient_id)
+        serializer = self.get_serializer(exams, many=True)
+        return Response(serializer.data)
