@@ -9,6 +9,11 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2>Gestión de Diagnósticos</h2>
                 <div class="btn-group">
+                    {% if can_add_diagnosticos %}
+                        <a href="{% url 'diagnosticos_add' %}" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Nuevo Diagnóstico
+                        </a>
+                    {% endif %}
                     <a href="{% url 'services_status' %}" class="btn btn-outline-info">Estado Servicios</a>
                 </div>
             </div>

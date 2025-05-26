@@ -23,42 +23,75 @@ class Command(BaseCommand):
 
         # Define groups and their permissions
         groups_permissions = {
-            'Administradores': [
+            'Administrador': [
                 'add_user', 'change_user', 'delete_user', 'view_user',
                 'add_group', 'change_group', 'delete_group', 'view_group',
                 'add_permission', 'change_permission', 'delete_permission', 'view_permission',
+                'can_view_all_examenes', 'can_add_examenes', 'can_change_examenes', 'can_delete_examenes',
+                'can_view_all_diagnosticos', 'can_add_diagnosticos', 'can_change_diagnosticos', 'can_delete_diagnosticos',
+                'can_view_all_cirugias', 'can_add_cirugias', 'can_change_cirugias', 'can_delete_cirugias',
+                'can_view_all_consultas', 'can_add_consultas', 'can_change_consultas', 'can_delete_consultas',
                 'can_manage_all_users', 'can_view_all_reports', 'can_configure_system',
                 'can_access_admin_panel', 'can_manage_permissions'
             ],
-            'Medicos': [
+            'Medico': [
+                'can_view_all_examenes', 'can_add_examenes', 'can_change_examenes', 'can_delete_examenes',
+                'can_view_all_diagnosticos', 'can_add_diagnosticos', 'can_change_diagnosticos', 'can_delete_diagnosticos',
+                'can_view_all_cirugias', 'can_add_cirugias', 'can_change_cirugias', 'can_delete_cirugias',
+                'can_view_all_consultas', 'can_add_consultas', 'can_change_consultas', 'can_delete_consultas',
+                'can_view_patient_history', 'can_create_prescriptions', 'can_approve_surgeries',
+                'can_view_medical_records', 'can_update_patient_status', 'can_schedule_surgeries'
+            ],
+            'Medico_de_Junta': [
+                'can_view_all_examenes', 'can_add_examenes', 'can_change_examenes', 'can_delete_examenes',
+                'can_view_all_diagnosticos', 'can_add_diagnosticos', 'can_change_diagnosticos', 'can_delete_diagnosticos',
+                'can_view_all_cirugias', 'can_add_cirugias', 'can_change_cirugias', 'can_delete_cirugias',
+                'can_view_all_consultas', 'can_add_consultas', 'can_change_consultas', 'can_delete_consultas',
                 'can_view_patient_history', 'can_create_prescriptions', 'can_approve_surgeries',
                 'can_view_medical_records', 'can_update_patient_status', 'can_schedule_surgeries',
-                'can_access_lab_results', 'can_modify_treatments'
+                'can_review_medical_records', 'can_audit_procedures', 'can_generate_audit_reports'
             ],
-            'Enfermeros': [
+            'Enfermero': [
+                'can_view_all_examenes', 'can_add_examenes', 'can_change_examenes',
+                'can_view_all_diagnosticos', 'can_add_diagnosticos', 'can_change_diagnosticos',
+                'can_view_all_consultas', 'can_add_consultas', 'can_change_consultas',
                 'can_update_patient_vitals', 'can_administer_medications', 'can_view_patient_schedule',
                 'can_update_patient_notes', 'can_assist_procedures', 'can_access_patient_records'
             ],
-            'Recepcionistas': [
-                'can_schedule_appointments', 'can_manage_patient_info', 'can_handle_billing',
-                'can_generate_reports', 'can_view_schedules', 'can_update_contact_info'
-            ],
-            'Tecnicos_Laboratorio': [
+            'Tecnico': [
+                'can_view_all_examenes', 'can_add_examenes', 'can_change_examenes',
                 'can_process_lab_samples', 'can_update_lab_results', 'can_manage_equipment',
                 'can_generate_lab_reports', 'can_quality_control'
-            ],
-            'Auditores_Medicos': [
-                'can_review_medical_records', 'can_audit_procedures', 'can_generate_audit_reports',
-                'can_access_compliance_data', 'can_review_billing'
-            ],
-            'Farmaceuticos': [
-                'can_dispense_medications', 'can_manage_inventory', 'can_verify_prescriptions',
-                'can_counsel_patients', 'can_track_medication_usage'
             ]
         }
 
         # Create custom permissions
         custom_permissions = [
+            # Permisos para Examenes
+            ('can_view_all_examenes', 'Can view all medical exams'),
+            ('can_add_examenes', 'Can add medical exams'),
+            ('can_change_examenes', 'Can change medical exams'),
+            ('can_delete_examenes', 'Can delete medical exams'),
+            
+            # Permisos para Diagnosticos
+            ('can_view_all_diagnosticos', 'Can view all medical diagnoses'),
+            ('can_add_diagnosticos', 'Can add medical diagnoses'),
+            ('can_change_diagnosticos', 'Can change medical diagnoses'),
+            ('can_delete_diagnosticos', 'Can delete medical diagnoses'),
+            
+            # Permisos para Cirugias
+            ('can_view_all_cirugias', 'Can view all surgeries'),
+            ('can_add_cirugias', 'Can add surgeries'),
+            ('can_change_cirugias', 'Can change surgeries'),
+            ('can_delete_cirugias', 'Can delete surgeries'),
+            
+            # Permisos para Consultas
+            ('can_view_all_consultas', 'Can view all medical consultations'),
+            ('can_add_consultas', 'Can add medical consultations'),
+            ('can_change_consultas', 'Can change medical consultations'),
+            ('can_delete_consultas', 'Can delete medical consultations'),
+            
+            # Permisos generales medicos
             ('can_view_patient_history', 'Can view patient medical history'),
             ('can_create_prescriptions', 'Can create medical prescriptions'),
             ('can_approve_surgeries', 'Can approve surgery procedures'),
@@ -67,33 +100,30 @@ class Command(BaseCommand):
             ('can_schedule_surgeries', 'Can schedule surgery procedures'),
             ('can_access_lab_results', 'Can access laboratory results'),
             ('can_modify_treatments', 'Can modify patient treatments'),
+            
+            # Permisos de enfermeria
             ('can_update_patient_vitals', 'Can update patient vital signs'),
             ('can_administer_medications', 'Can administer medications'),
             ('can_view_patient_schedule', 'Can view patient schedules'),
             ('can_update_patient_notes', 'Can update patient notes'),
             ('can_assist_procedures', 'Can assist in medical procedures'),
             ('can_access_patient_records', 'Can access patient records'),
-            ('can_schedule_appointments', 'Can schedule patient appointments'),
-            ('can_manage_patient_info', 'Can manage patient information'),
-            ('can_handle_billing', 'Can handle billing and payments'),
-            ('can_generate_reports', 'Can generate system reports'),
-            ('can_view_schedules', 'Can view appointment schedules'),
-            ('can_update_contact_info', 'Can update contact information'),
+            
+            # Permisos de laboratorio/tecnico
             ('can_process_lab_samples', 'Can process laboratory samples'),
             ('can_update_lab_results', 'Can update laboratory results'),
             ('can_manage_equipment', 'Can manage medical equipment'),
             ('can_generate_lab_reports', 'Can generate laboratory reports'),
             ('can_quality_control', 'Can perform quality control'),
+            
+            # Permisos de auditoria
             ('can_review_medical_records', 'Can review medical records for audit'),
             ('can_audit_procedures', 'Can audit medical procedures'),
             ('can_generate_audit_reports', 'Can generate audit reports'),
             ('can_access_compliance_data', 'Can access compliance data'),
             ('can_review_billing', 'Can review billing information'),
-            ('can_dispense_medications', 'Can dispense medications'),
-            ('can_manage_inventory', 'Can manage pharmacy inventory'),
-            ('can_verify_prescriptions', 'Can verify medical prescriptions'),
-            ('can_counsel_patients', 'Can provide patient counseling'),
-            ('can_track_medication_usage', 'Can track medication usage'),
+            
+            # Permisos administrativos
             ('can_manage_all_users', 'Can manage all system users'),
             ('can_view_all_reports', 'Can view all system reports'),
             ('can_configure_system', 'Can configure system settings'),

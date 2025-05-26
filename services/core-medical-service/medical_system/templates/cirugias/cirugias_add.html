@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}Agregar Cirugía{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Agregar Nueva Cirugía</h2>
+                <a href="{% url 'cirugias_redirect' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver a Lista
+                </a>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-plus-circle"></i> Información de la Cirugía
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nombre" class="form-label">Nombre de la Cirugía *</label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre"
+                                           value="{{ form_data.nombre|default:'' }}" required>
+                                    <div class="form-text">Ej: Apendicectomía, Colecistectomía Laparoscópica</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="paciente_id" class="form-label">Paciente *</label>
+                                    <select class="form-control" id="paciente_id" name="paciente_id" required>
+                                        <option value="">Seleccione un paciente</option>
+                                        {% for patient in patients %}
+                                            <option value="{{ patient.id }}"
+                                                    {% if form_data.paciente_id == patient.id|stringformat:"s" %}selected{% endif %}>
+                                                {{ patient.nombres }} {{ patient.apellidos }} - CC: {{ patient.numero_documento }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="fecha_programada" class="form-label">Fecha Programada *</label>
+                                    <input type="datetime-local" class="form-control" id="fecha_programada" name="fecha_programada"
+                                           value="{{ form_data.fecha_programada|default:'' }}" required>
+                                    <div class="form-text">Fecha y hora programada para la cirugía</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="fecha_realizada" class="form-label">Fecha Realizada</label>
+                                    <input type="datetime-local" class="form-control" id="fecha_realizada" name="fecha_realizada"
+                                           value="{{ form_data.fecha_realizada|default:'' }}">
+                                    <div class="form-text">Completar solo si la cirugía ya se realizó</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="estado" class="form-label">Estado *</label>
+                                    <select class="form-control" id="estado" name="estado" required>
+                                        <option value="programada" {% if form_data.estado == "programada" or not form_data.estado %}selected{% endif %}>Programada</option>
+                                        <option value="realizada" {% if form_data.estado == "realizada" %}selected{% endif %}>Realizada</option>
+                                        <option value="cancelada" {% if form_data.estado == "cancelada" %}selected{% endif %}>Cancelada</option>
+                                        <option value="pospuesta" {% if form_data.estado == "pospuesta" %}selected{% endif %}>Pospuesta</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="duracion_minutos" class="form-label">Duración (minutos)</label>
+                                    <input type="number" class="form-control" id="duracion_minutos" name="duracion_minutos"
+                                           value="{{ form_data.duracion_minutos|default:'' }}" min="1" max="1440">
+                                    <div class="form-text">Duración estimada o real en minutos</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción de la Cirugía *</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required>{{ form_data.descripcion|default:'' }}</textarea>
+                            <div class="form-text">Describa el procedimiento quirúrgico, técnica utilizada, etc.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="observaciones" class="form-label">Observaciones</label>
+                            <textarea class="form-control" id="observaciones" name="observaciones" rows="3">{{ form_data.observaciones|default:'' }}</textarea>
+                            <div class="form-text">Observaciones preoperatorias, instrucciones especiales, etc.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="complicaciones" class="form-label">Complicaciones</label>
+                            <textarea class="form-control" id="complicaciones" name="complicaciones" rows="3">{{ form_data.complicaciones|default:'' }}</textarea>
+                            <div class="form-text">Registrar complicaciones durante o después de la cirugía (si las hay)</div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'cirugias_redirect' %}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Cirugía
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% if can_add_cirugias %}
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle"></i>
+                    Tienes permisos para crear cirugías como miembro del grupo:
+                    <strong>{{ user_groups|join:", " }}</strong>
+                </div>
+            {% else %}
+                <div class="alert alert-warning mt-3">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Solo usuarios con roles de Administrador, Médico o Médico de Junta pueden crear cirugías.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-populate fecha programada if empty
+document.addEventListener('DOMContentLoaded', function() {
+    const fechaProgramadaInput = document.getElementById('fecha_programada');
+    if (!fechaProgramadaInput.value) {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(9, 0, 0, 0); // Default to 9:00 AM tomorrow
+        tomorrow.setMinutes(tomorrow.getMinutes() - tomorrow.getTimezoneOffset());
+        fechaProgramadaInput.value = tomorrow.toISOString().slice(0, 16);
+    }
+
+    // Auto-fill fecha_realizada when estado changes to "realizada"
+    document.getElementById('estado').addEventListener('change', function() {
+        const fechaRealizadaInput = document.getElementById('fecha_realizada');
+        if (this.value === 'realizada' && !fechaRealizadaInput.value) {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            fechaRealizadaInput.value = now.toISOString().slice(0, 16);
+        }
+    });
+});
+</script>
+{% endblock %}

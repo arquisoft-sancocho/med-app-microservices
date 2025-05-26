@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}Acceso Denegado{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Acceso Denegado
+                    </h4>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-lock" style="font-size: 4rem; color: #ffc107;"></i>
+                    </div>
+
+                    <h5 class="mb-3">No tienes permisos para acceder a esta página</h5>
+
+                    <p class="text-muted mb-4">
+                        Tu rol actual no te permite realizar esta acción.
+                        Si crees que esto es un error, contacta con el administrador del sistema.
+                    </p>
+
+                    {% if user.is_authenticated %}
+                        <div class="alert alert-info">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Usuario:</strong> {{ user.username }}<br>
+                                    <strong>Nombre:</strong> {{ user.first_name }} {{ user.last_name }}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Grupos asignados:</strong><br>
+                                    {% if user_groups %}
+                                        {% for group in user_groups %}
+                                            <span class="badge bg-primary me-1">{{ group }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="text-muted">Sin grupos asignados</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h6 class="mb-0">Permisos por Grupo de Usuario</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-start">
+                                    <div class="col-md-6">
+                                        <h6><span class="badge bg-danger">Administrador</span></h6>
+                                        <ul class="list-unstyled ms-3">
+                                            <li><i class="fas fa-check text-success"></i> Todos los exámenes</li>
+                                            <li><i class="fas fa-check text-success"></i> Todos los diagnósticos</li>
+                                            <li><i class="fas fa-check text-success"></i> Todas las cirugías</li>
+                                            <li><i class="fas fa-check text-success"></i> Todas las consultas</li>
+                                        </ul>
+
+                                        <h6><span class="badge bg-primary">Médico</span></h6>
+                                        <ul class="list-unstyled ms-3">
+                                            <li><i class="fas fa-check text-success"></i> Todos los exámenes</li>
+                                            <li><i class="fas fa-check text-success"></i> Todos los diagnósticos</li>
+                                            <li><i class="fas fa-check text-success"></i> Todas las cirugías</li>
+                                            <li><i class="fas fa-check text-success"></i> Todas las consultas</li>
+                                        </ul>
+
+                                        <h6><span class="badge bg-info">Médico de Junta</span></h6>
+                                        <ul class="list-unstyled ms-3">
+                                            <li><i class="fas fa-check text-success"></i> Todos los exámenes</li>
+                                            <li><i class="fas fa-check text-success"></i> Todos los diagnósticos</li>
+                                            <li><i class="fas fa-check text-success"></i> Todas las cirugías</li>
+                                            <li><i class="fas fa-check text-success"></i> Todas las consultas</li>
+                                            <li><i class="fas fa-check text-success"></i> Auditoría y supervisión</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6><span class="badge bg-success">Enfermero</span></h6>
+                                        <ul class="list-unstyled ms-3">
+                                            <li><i class="fas fa-check text-success"></i> Todos los exámenes</li>
+                                            <li><i class="fas fa-check text-success"></i> Todos los diagnósticos</li>
+                                            <li><i class="fas fa-times text-danger"></i> Cirugías (sin acceso)</li>
+                                            <li><i class="fas fa-check text-success"></i> Todas las consultas</li>
+                                        </ul>
+
+                                        <h6><span class="badge bg-secondary">Técnico</span></h6>
+                                        <ul class="list-unstyled ms-3">
+                                            <li><i class="fas fa-check text-success"></i> Solo exámenes</li>
+                                            <li><i class="fas fa-times text-danger"></i> Diagnósticos (sin acceso)</li>
+                                            <li><i class="fas fa-times text-danger"></i> Cirugías (sin acceso)</li>
+                                            <li><i class="fas fa-times text-danger"></i> Consultas (sin acceso)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-info-circle"></i>
+                            No has iniciado sesión. Debes autenticarte para acceder al sistema.
+                        </div>
+                    {% endif %}
+
+                    <div class="mt-4">
+                        <a href="{% url 'index' %}" class="btn btn-primary me-2">
+                            <i class="fas fa-home"></i> Ir al Inicio
+                        </a>
+                        {% if user.is_authenticated %}
+                            <button onclick="history.back()" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Volver
+                            </button>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-success">
+                                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% if user.is_authenticated and not user_groups %}
+                <div class="alert alert-danger mt-4">
+                    <h6><i class="fas fa-exclamation-triangle"></i> Problema de Configuración</h6>
+                    <p class="mb-2">
+                        Tu usuario no tiene ningún grupo asignado. Para poder utilizar el sistema médico,
+                        necesitas que un administrador te asigne a uno de los siguientes grupos:
+                    </p>
+                    <ul class="mb-2">
+                        <li><strong>Administrador:</strong> Acceso completo al sistema</li>
+                        <li><strong>Medico:</strong> Acceso completo a funciones médicas</li>
+                        <li><strong>Medico_de_Junta:</strong> Acceso completo + auditoría</li>
+                        <li><strong>Enfermero:</strong> Acceso a exámenes, diagnósticos y consultas</li>
+                        <li><strong>Tecnico:</strong> Acceso solo a exámenes</li>
+                    </ul>
+                    <p class="mb-0">
+                        <strong>Contacta al administrador:</strong> admin@medicalsystem.com
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

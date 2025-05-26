@@ -31,6 +31,14 @@ urlpatterns = [
     path('diagnosticos/', microservice_views.diagnosticos_list, name='diagnosticos_redirect'),
     path('cirugias/', microservice_views.cirugias_list, name='cirugias_redirect'),
 
+    # Add new record views
+    path('examenes/add/', microservice_views.examenes_add, name='examenes_add'),
+    path('diagnosticos/add/', microservice_views.diagnosticos_add, name='diagnosticos_add'),
+    path('cirugias/add/', microservice_views.cirugias_add, name='cirugias_add'),
+
+    # Permission denied page
+    path('permission-denied/', microservice_views.permission_denied, name='permission_denied'),
+
     # Main index view
     path('', views.index, name='index'),
 

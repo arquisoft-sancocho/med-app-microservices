@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Agregar Diagnóstico{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Agregar Nuevo Diagnóstico</h2>
+                <a href="{% url 'diagnosticos_redirect' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver a Lista
+                </a>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-plus-circle"></i> Información del Diagnóstico
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nombre" class="form-label">Nombre del Diagnóstico *</label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre"
+                                           value="{{ form_data.nombre|default:'' }}" required>
+                                    <div class="form-text">Ej: Hipertensión Arterial, Diabetes Tipo 2</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="fecha_diagnostico" class="form-label">Fecha del Diagnóstico *</label>
+                                    <input type="datetime-local" class="form-control" id="fecha_diagnostico" name="fecha_diagnostico"
+                                           value="{{ form_data.fecha_diagnostico|default:'' }}" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="paciente_id" class="form-label">Paciente *</label>
+                                    <select class="form-control" id="paciente_id" name="paciente_id" required>
+                                        <option value="">Seleccione un paciente</option>
+                                        {% for patient in patients %}
+                                            <option value="{{ patient.id }}"
+                                                    {% if form_data.paciente_id == patient.id|stringformat:"s" %}selected{% endif %}>
+                                                {{ patient.nombres }} {{ patient.apellidos }} - CC: {{ patient.numero_documento }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="codigo_cie" class="form-label">Código CIE-10</label>
+                                    <input type="text" class="form-control" id="codigo_cie" name="codigo_cie"
+                                           value="{{ form_data.codigo_cie|default:'' }}" placeholder="Ej: I10, E11">
+                                    <div class="form-text">Código de la Clasificación Internacional de Enfermedades</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción del Diagnóstico *</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required>{{ form_data.descripcion|default:'' }}</textarea>
+                            <div class="form-text">Describa detalladamente el diagnóstico y sus características</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tratamiento" class="form-label">Tratamiento Recomendado</label>
+                            <textarea class="form-control" id="tratamiento" name="tratamiento" rows="4">{{ form_data.tratamiento|default:'' }}</textarea>
+                            <div class="form-text">Describa el tratamiento recomendado, medicamentos, terapias, etc.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="observaciones" class="form-label">Observaciones</label>
+                            <textarea class="form-control" id="observaciones" name="observaciones" rows="3">{{ form_data.observaciones|default:'' }}</textarea>
+                            <div class="form-text">Observaciones adicionales, seguimiento, precauciones, etc.</div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'diagnosticos_redirect' %}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Diagnóstico
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% if can_add_diagnosticos %}
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle"></i>
+                    Tienes permisos para crear diagnósticos como miembro del grupo:
+                    <strong>{{ user_groups|join:", " }}</strong>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-populate current date/time if empty
+document.addEventListener('DOMContentLoaded', function() {
+    const fechaInput = document.getElementById('fecha_diagnostico');
+    if (!fechaInput.value) {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        fechaInput.value = now.toISOString().slice(0, 16);
+    }
+});
+</script>
+{% endblock %}

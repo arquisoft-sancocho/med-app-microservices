@@ -9,6 +9,11 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2>Gestión de Exámenes</h2>
                 <div class="btn-group">
+                    {% if can_add_examenes %}
+                        <a href="{% url 'examenes_add' %}" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Nuevo Examen
+                        </a>
+                    {% endif %}
                     <a href="{% url 'services_status' %}" class="btn btn-outline-info">Estado Servicios</a>
                 </div>
             </div>
