@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 from . import views
 from . import api_views
 from . import jwt_views
+from . import permissions_api
 
 # API Router for microservice endpoints
 router = DefaultRouter()
@@ -23,4 +24,8 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/patient/<int:paciente_id>/basic/', api_views.get_patient_basic_info, name='patient-basic'),
     path('api/patient/<int:paciente_id>/historia-clinica/', api_views.get_historia_clinica_completa, name='historia-clinica'),
+    
+    # Permissions setup endpoints
+    path('api/setup-permissions/', permissions_api.setup_permissions_endpoint, name='setup-permissions'),
+    path('api/permissions-status/', permissions_api.permissions_status, name='permissions-status'),
 ]
