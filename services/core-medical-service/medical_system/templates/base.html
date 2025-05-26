@@ -37,19 +37,17 @@
                 </li>
 
                 {% if user.is_authenticated %}
-                {% comment %} Use try-catch for URL resolution {% endcomment %}
-                {% load static %}
                 <li class="nav-item">
-                    <a class="nav-link" href="/examenes/">Exámenes</a>
+                    <a class="nav-link" href="{% url 'examenes_redirect' %}">Exámenes</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="/diagnosticos/">Diagnósticos</a>
+                    <a class="nav-link" href="{% url 'diagnosticos_redirect' %}">Diagnósticos</a>
                 </li>
 
                 {% if tiene_permiso_extra %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/cirugias/">Cirugías</a>
+                        <a class="nav-link" href="{% url 'cirugias_redirect' %}">Cirugías</a>
                     </li>
                 {% endif %}
                 {% endif %}
