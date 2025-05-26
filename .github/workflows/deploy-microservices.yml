@@ -38,16 +38,19 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
+        timeout-minutes: 5
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
-        uses: 'google-github-actions/auth@v2'
+        uses: 'google-github-actions/auth@v1.1.1'
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
+        timeout-minutes: 5
 
       - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v2'
+        uses: 'google-github-actions/setup-gcloud@v1.1.1'
+        timeout-minutes: 5
 
       - name: 'Configure Docker to use gcloud as a credential helper'
         run: |
