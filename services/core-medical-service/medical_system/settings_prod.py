@@ -78,23 +78,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'medical_system.wsgi.application'
 
-# Database settings
+# Database settings - Use environment variables first, then Secret Manager as fallback
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': access_secret_version("db-name", fallback='medical_system'),
-        'USER': access_secret_version("db-user", fallback='postgres'),
-        'PASSWORD': access_secret_version("db-password"),
-        'HOST': '127.0.0.1',  # Para Cloud SQL Proxy local
-        'PORT': '5432',
+        'NAME': os.getenv('DB_NAME') or access_secret_version("db-name", fallback='medical_system'),
+        'USER': os.getenv('DB_USER') or access_secret_version("db-user", fallback='postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD') or access_secret_version("db-password"),
+        'HOST': os.getenv('DB_HOST', '127.0.0.1'),  # Para Cloud SQL Proxy local
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 
 # Si estamos en Cloud Run, usar socket para la base de datos
 db_instance = access_secret_version("db-instance")
-if os.environ.get('K_SERVICE') and db_instance:
-    DATABASES['default']['HOST'] = f"/cloudsql/{db_instance}"
-    DATABASES['default']['PORT'] = ''
+if os.environ.get('K_SERVICE'):
+    # Use DB_HOST from environment if available (Cloud Run deployment sets this)
+    if os.getenv('DB_HOST') and '/cloudsql/' in os.getenv('DB_HOST'):
+        DATABASES['default']['HOST'] = os.getenv('DB_HOST')
+        DATABASES['default']['PORT'] = ''
+    elif db_instance:
+        DATABASES['default']['HOST'] = f"/cloudsql/{db_instance}"
+        DATABASES['default']['PORT'] = ''
 
 # Static files settings
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
