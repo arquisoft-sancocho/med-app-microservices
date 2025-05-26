@@ -13,13 +13,20 @@ logger = logging.getLogger(__name__)
 # --- MANTENIDO: Funciones para las sondas ---
 def readiness_check(request):
     """
-    /health/ready: Usada por Startup Probe. Temporarily simplified to skip DB check.
+    /health/ready: Used by Startup Probe. Checks DB connection and service readiness.
     """
-    # Temporarily skip database check to allow deployment
-    logger.info("Startup/Readiness probe: Skipping DB check temporarily.")
-    
-    # Always return ready for now
-    return HttpResponse("Ready", status=200, content_type="text/plain")
+    try:
+        # Test database connection
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+
+        logger.info("Startup/Readiness probe: Database connection successful.")
+        return HttpResponse("Ready", status=200, content_type="text/plain")
+
+    except Exception as e:
+        logger.error(f"Startup/Readiness probe failed: {str(e)}")
+        return HttpResponse(f"Not Ready: {str(e)}", status=503, content_type="text/plain")
 
 def liveness_check(request):
     """

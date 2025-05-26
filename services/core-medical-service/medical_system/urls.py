@@ -20,35 +20,38 @@ from django.conf.urls.static import static
 from django.conf import settings
 from . import views
 from core import views as core_views
-from core import microservice_views
+# from core import microservice_views  # Temporarily commented out
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # path('test-url/', views.test_url_resolution, name='test_url'),  # Temporarily removed
+
+    # Microservice redirect views for navigation from templates - MUST BE BEFORE OTHER INCLUDES
+    path('examenes/', views.examenes_redirect, name='examenes_redirect'),
+    path('diagnosticos/', views.diagnosticos_redirect, name='diagnosticos_redirect'),
+    path('cirugias/', views.cirugias_redirect, name='cirugias_redirect'),
+
+    # Main index view
     path('', views.index, name='index'),
-    path('test-url/', views.test_url_resolution, name='test_url'),
+
     # Include app-specific URLs - Core service only
     path('', include('pacientes2.urls')),
     path('consultas/', include('consultas.urls')),
     path('health/', include('core.urls')), # Health checks
 
-    # Microservice redirect views for navigation from templates
-    path('examenes/', views.examenes_redirect, name='examenes_redirect'),
-    path('diagnosticos/', views.diagnosticos_redirect, name='diagnosticos_redirect'),
-    path('cirugias/', views.cirugias_redirect, name='cirugias_redirect'),
+    # Microservice API integration views (for API calls) - TEMPORARILY COMMENTED OUT
+    # path('api/examenes/', microservice_views.examenes_list, name='examenes_list'),
+    # path('api/examenes/patient/<int:patient_id>/', microservice_views.examenes_patient, name='examenes_patient'),
+    # path('api/examenes/detail/<int:exam_id>/', microservice_views.examenes_detail, name='examenes_detail'),
 
-    # Microservice API integration views (for API calls)
-    path('api/examenes/', microservice_views.examenes_list, name='examenes_list'),
-    path('api/examenes/patient/<int:patient_id>/', microservice_views.examenes_patient, name='examenes_patient'),
-    path('api/examenes/detail/<int:exam_id>/', microservice_views.examenes_detail, name='examenes_detail'),
+    # path('api/diagnosticos/', microservice_views.diagnosticos_list, name='diagnosticos_list'),
+    # path('api/diagnosticos/patient/<int:patient_id>/', microservice_views.diagnosticos_patient, name='diagnosticos_patient'),
 
-    path('api/diagnosticos/', microservice_views.diagnosticos_list, name='diagnosticos_list'),
-    path('api/diagnosticos/patient/<int:patient_id>/', microservice_views.diagnosticos_patient, name='diagnosticos_patient'),
+    # path('api/cirugias/', microservice_views.cirugias_list, name='cirugias_list'),
+    # path('api/cirugias/patient/<int:patient_id>/', microservice_views.cirugias_patient, name='cirugias_patient'),
 
-    path('api/cirugias/', microservice_views.cirugias_list, name='cirugias_list'),
-    path('api/cirugias/patient/<int:patient_id>/', microservice_views.cirugias_patient, name='cirugias_patient'),
-
-    # Microservice status endpoint
-    path('services/status/', microservice_views.services_status, name='services_status'),
+    # Microservice status endpoint - TEMPORARILY COMMENTED OUT
+    # path('services/status/', microservice_views.services_status, name='services_status'),
 
     # API endpoints for microservice communication
     path('', include('pacientes2.api_urls')),

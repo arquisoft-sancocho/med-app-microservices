@@ -6,18 +6,18 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def test_url_resolution(request):
-    """Simple test view to check if URL routing works"""
-    return HttpResponse("URL routing works!", content_type="text/plain")
+# def test_url_resolution(request):
+#     """Simple test view to check if URL routing works"""
+#     return HttpResponse("URL routing works!", content_type="text/plain")
 
 @login_required
 def index(request):
     try:
         logger.info(f"Index view called by user: {request.user}")
-        
+
         # Try to render the template
         return render(request, 'index.html')
-        
+
     except Exception as e:
         logger.error(f"Error in index view: {str(e)}")
         return create_fallback_response(request, f"Error: {str(e)}")
@@ -36,13 +36,13 @@ def examenes_redirect(request):
         path = ''
     else:
         path = full_path
-    
+
     # Ensure path starts with /
     if path and not path.startswith('/'):
         path = '/' + path
     elif not path:
         path = '/'
-        
+
     redirect_url = f"{exams_url}{path}"
     logger.info(f"Redirecting to examenes service: {redirect_url}")
     return HttpResponseRedirect(redirect_url)
@@ -59,13 +59,13 @@ def diagnosticos_redirect(request):
         path = ''
     else:
         path = full_path
-    
+
     # Ensure path starts with /
     if path and not path.startswith('/'):
         path = '/' + path
     elif not path:
         path = '/'
-        
+
     redirect_url = f"{diagnosis_url}{path}"
     logger.info(f"Redirecting to diagnosticos service: {redirect_url}")
     return HttpResponseRedirect(redirect_url)
@@ -82,13 +82,13 @@ def cirugias_redirect(request):
         path = ''
     else:
         path = full_path
-    
+
     # Ensure path starts with /
     if path and not path.startswith('/'):
         path = '/' + path
     elif not path:
         path = '/'
-        
+
     redirect_url = f"{surgery_url}{path}"
     logger.info(f"Redirecting to cirugias service: {redirect_url}")
     return HttpResponseRedirect(redirect_url)
@@ -96,7 +96,7 @@ def cirugias_redirect(request):
 
 def create_fallback_response(request, error_message=""):
     """Create a fallback HTML response when template rendering fails"""
-    
+
     # Basic HTML template with inline CSS
     fallback_html = f"""
     <!DOCTYPE html>
@@ -178,22 +178,22 @@ def create_fallback_response(request, error_message=""):
             <div class="logo">🏥</div>
             <h1 class="title">Medical System</h1>
             <p class="subtitle">Healthcare Management Platform</p>
-            
+
             <div class="user-info">
                 <strong>Welcome, {request.user.username if request.user.is_authenticated else 'Guest'}!</strong>
                 {f'<br><small>Email: {request.user.email}</small>' if request.user.is_authenticated and request.user.email else ''}
             </div>
-            
+
             <div class="navigation">
                 <a href="/admin/" class="nav-link">Admin Panel</a>
                 <a href="/logout/" class="nav-link">Logout</a>
             </div>
-            
+
             {f'<div class="error-info">Note: {error_message}</div>' if error_message else ''}
         </div>
     </body>
     </html>
     """
-    
+
     return HttpResponse(fallback_html)
 

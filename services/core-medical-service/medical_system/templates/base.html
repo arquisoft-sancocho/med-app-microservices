@@ -35,7 +35,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'pacienteList2' %}">Pacientes</a>
                 </li>
-               
+
                 {% if user.is_authenticated %}
                 {% comment %} Use try-catch for URL resolution {% endcomment %}
                 {% load static %}
@@ -53,15 +53,15 @@
                     </li>
                 {% endif %}
                 {% endif %}
-                
+
 
                 {% if tiene_permiso_unico %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'consultaList' %}">Consultas Médicas</a>
                     </li>
                 {% endif %}
-                
-                
+
+
 
                 {% if user.is_staff or user.is_superuser or user.groups.all.0.name == 'admin' %}
                     <li class="nav-item">
