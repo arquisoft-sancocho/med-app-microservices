@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from . import views
 from core import views as core_views
-# from core import microservice_views  # Temporarily commented out
+from core import microservice_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,19 +39,19 @@ urlpatterns = [
     path('consultas/', include('consultas.urls')),
     path('health/', include('core.urls')), # Health checks
 
-    # Microservice API integration views (for API calls) - TEMPORARILY COMMENTED OUT
-    # path('api/examenes/', microservice_views.examenes_list, name='examenes_list'),
-    # path('api/examenes/patient/<int:patient_id>/', microservice_views.examenes_patient, name='examenes_patient'),
-    # path('api/examenes/detail/<int:exam_id>/', microservice_views.examenes_detail, name='examenes_detail'),
+    # Microservice API integration views (for API calls)
+    path('api/examenes/', microservice_views.examenes_list, name='examenes_list'),
+    path('api/examenes/patient/<int:patient_id>/', microservice_views.examenes_patient, name='examenes_patient'),
+    path('api/examenes/detail/<int:exam_id>/', microservice_views.examenes_detail, name='examenes_detail'),
 
-    # path('api/diagnosticos/', microservice_views.diagnosticos_list, name='diagnosticos_list'),
-    # path('api/diagnosticos/patient/<int:patient_id>/', microservice_views.diagnosticos_patient, name='diagnosticos_patient'),
+    path('api/diagnosticos/', microservice_views.diagnosticos_list, name='diagnosticos_list'),
+    path('api/diagnosticos/patient/<int:patient_id>/', microservice_views.diagnosticos_patient, name='diagnosticos_patient'),
 
-    # path('api/cirugias/', microservice_views.cirugias_list, name='cirugias_list'),
-    # path('api/cirugias/patient/<int:patient_id>/', microservice_views.cirugias_patient, name='cirugias_patient'),
+    path('api/cirugias/', microservice_views.cirugias_list, name='cirugias_list'),
+    path('api/cirugias/patient/<int:patient_id>/', microservice_views.cirugias_patient, name='cirugias_patient'),
 
-    # Microservice status endpoint - TEMPORARILY COMMENTED OUT
-    # path('services/status/', microservice_views.services_status, name='services_status'),
+    # Microservice status endpoint
+    path('services/status/', microservice_views.services_status, name='services_status'),
 
     # API endpoints for microservice communication
     path('', include('pacientes2.api_urls')),
