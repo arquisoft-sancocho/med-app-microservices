@@ -1,6 +1,4 @@
 from .settings import *
-import os
-import google.auth
 from google.cloud import secretmanager
 
 # Improved secret manager access with better error handling
@@ -222,3 +220,7 @@ CSRF_TRUSTED_ORIGINS = [
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None  # Disable COOP for HTTP compatibility
 SECURE_REFERRER_POLICY = "same-origin"
 X_FRAME_OPTIONS = 'DENY'
+
+# Login/Logout URLs
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
